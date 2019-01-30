@@ -32,7 +32,7 @@
         <div class="text-center">
 
             <h2 class="main-h2 py-3"><?= h($news->title) ?></h2>
-            <p class="main-p py-3"><?= stripslashes($news->text) ?>.</p>
+            <p class="main-p py-3"><?= strip_tags($news->text) ?>.</p>
         </div>
     <?php endforeach; ?>
 

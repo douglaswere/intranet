@@ -40,8 +40,8 @@ $this->extend('/Common/centerPage')
 
                 <div class="col-md-8">
                     <h2 class="blog-post-title"><?= h($news->title) ?></h2>
-                    <p class="main-p"><?= stripslashes($news->text) ?></p>
-                    <?= h($news->feature) ?>
+                    <p class="main-p"><?= strip_tags($news->text) ?></p>
+
                     <h3>
                         <?= $this->Html->link(__('Read more'), ['action' => 'view', $news->id], ['class' => 'a-h3']) ?>
 
@@ -50,7 +50,7 @@ $this->extend('/Common/centerPage')
                 </div>
                 <div class="col-md-2 d-flex justify-content-center">
                     <p class="blog-post-meta"><?= h($news->date_submitted) ?> by <a
-                            href="#"><?= $news->has('user') ? $this->Html->link($news->user->title, ['controller' => 'Users', 'action' => 'view', $news->user->first_name]) : '' ?></a>
+                            href="#"><?= $news->has('user') ? $this->Html->link($news->user->first_name, ['controller' => 'Users', 'action' => 'view', $news->user->first_name]) : '' ?></a>
                     </p>
                 </div>
 
