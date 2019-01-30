@@ -1,4 +1,5 @@
 <?php
+
 namespace App\View\Cell;
 
 use Cake\View\Cell;
@@ -35,7 +36,13 @@ class BannerCell extends Cell
     public function display()
     {
         $this->loadModel('News');
-        $feature = $this->News->find('feature');
-        $this->set('feature', $feature);
+        $query = $this->News->find('all', [
+            'condition' => ['feature' => 1],
+            'contain' => ['NewsImages'],
+            'limit' => 1
+        ]);
+        $feature = $query->all();
+
+        $this->set(compact('feature'));
     }
 }

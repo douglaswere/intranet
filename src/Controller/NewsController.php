@@ -33,7 +33,7 @@ class NewsController extends AppController
     {
         $this->viewBuilder()->setLayout('home');
         $this->paginate = [
-            'contain' => ['Users']
+            'contain' => ['Users','NewsImages']
         ];
         $news = $this->paginate($this->News);
 
@@ -77,11 +77,17 @@ class NewsController extends AppController
 
                 $this->loadModel('NewsImages');
                 $image = $this->NewsImages->newEntity();
-                if (move_uploaded_file($file['tmp_name'], WWW_ROOT . 'files\\' . $file['name'])) {
-                    $this->request->data['filename'] = $file['name'];
 
+                $dir = WWW_ROOT . 'files\\';
+                if (move_uploaded_file($file['tmp_name'], $dir . $file['name'])) {
+                    $this->request->data['filename'] = $file['name'];
+                    $size = getimagesize($file['tmp_name'], $info);
                     $newsImage = $this->NewsImages->patchEntity($image, $file);
                     $newsImage->news_id = $news->id;
+                    $newsImage->height =  $size[0];
+                    $newsImage->width =  $size[1];
+                    $newsImage->feature = $news->feature;
+                    $newsImage->url = $dir . $file['name'];
                     if($this->NewsImages->save($newsImage)){
                         $this->Flash->success(__('The image file has been saved.'));
                     }

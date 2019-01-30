@@ -31,6 +31,7 @@ class NewsImage extends Entity
      * @var array
      */
     protected $_accessible = [
+        'id' => true,
         'news_id' => true,
         'name' => true,
         'size' => true,

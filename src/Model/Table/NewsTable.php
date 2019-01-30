@@ -12,7 +12,7 @@ use Cake\Validation\Validator;
  * @property \App\Model\Table\UsersTable|\Cake\ORM\Association\BelongsTo $Users
  * @property \App\Model\Table\FilesTable|\Cake\ORM\Association\BelongsToMany $Files
  * @property \App\Model\Table\TagsTable|\Cake\ORM\Association\BelongsToMany $Tags
- *
+ * @property \App\Model\Table\NewsImagesTable|\Cake\ORM\Association\HasMany $NewsImages
  * @method \App\Model\Entity\News get($primaryKey, $options = [])
  * @method \App\Model\Entity\News newEntity($data = null, array $options = [])
  * @method \App\Model\Entity\News[] newEntities(array $data, array $options = [])
@@ -52,6 +52,9 @@ class NewsTable extends Table
             'foreignKey' => 'news_id',
             'targetForeignKey' => 'tag_id',
             'joinTable' => 'news_tags'
+        ]);
+        $this->hasMany('NewsImages', [
+            'foreignKey' => 'news_id'
         ]);
     }
 
@@ -118,6 +121,6 @@ class NewsTable extends Table
     }
     public function findFeature(Query $query, array $options)
     {
-        return $query->where(['feature' => 'yes'])->limit(1);
+        return $query->where(['feature' => '1'])->limit(1);
     }
 }

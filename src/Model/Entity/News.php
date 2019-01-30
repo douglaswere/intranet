@@ -19,6 +19,7 @@ use Cake\ORM\Entity;
  * @property \App\Model\Entity\User $user
  * @property \App\Model\Entity\File[] $files
  * @property \App\Model\Entity\Tag[] $tags
+ * @property \App\Model\Entity\NewsImage[] $news_images
  */
 class News extends Entity
 {
