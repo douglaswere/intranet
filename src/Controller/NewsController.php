@@ -69,23 +69,24 @@ class NewsController extends AppController
 
         if ($this->getRequest()->is('post')) {
 
-            echo '<pre>';
             $info = $this->request->getData();
-
             $file = $info['image'];
-
-            $this->loadModel('NewsImages');
-            $image = $this->NewsImages->newEntity();
-            if (move_uploaded_file($file['tmp_name'], WWW_ROOT . 'files' . $file['name'])) {
-                $this->request->data['filename'] = $file['name'];
-            }
-            $newsImage = $this->NewsImages->patchEntity($image, $file);
-            $newsImage->news_id = 1;
-            var_dump($newsImage);
-            exit;
 
             $news = $this->News->patchEntity($news, $this->request->getData());
             if ($this->News->save($news)) {
+
+                $this->loadModel('NewsImages');
+                $image = $this->NewsImages->newEntity();
+                if (move_uploaded_file($file['tmp_name'], WWW_ROOT . 'files\\' . $file['name'])) {
+                    $this->request->data['filename'] = $file['name'];
+
+                    $newsImage = $this->NewsImages->patchEntity($image, $file);
+                    $newsImage->news_id = $news->id;
+                    if($this->NewsImages->save($newsImage)){
+                        $this->Flash->success(__('The image file has been saved.'));
+                    }
+                }
+
                 $this->Flash->success(__('The news has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
