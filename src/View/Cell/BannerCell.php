@@ -39,7 +39,8 @@ class BannerCell extends Cell
         $query = $this->News->find('all', [
             'condition' => ['feature' => 1],
             'contain' => ['NewsImages'],
-            'limit' => 1
+            'limit' => 1,
+            'order' => ['News.id' => 'DESC']
         ]);
         $feature = $query->all();
 

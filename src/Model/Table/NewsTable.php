@@ -54,7 +54,9 @@ class NewsTable extends Table
             'joinTable' => 'news_tags'
         ]);
         $this->hasMany('NewsImages', [
-            'foreignKey' => 'news_id'
+            'foreignKey' => 'news_id',
+            'dependent' => true,
+            'cascadeCallbacks' => true,
         ]);
     }
 
