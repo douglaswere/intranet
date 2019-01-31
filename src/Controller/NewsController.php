@@ -37,7 +37,6 @@ class NewsController extends AppController
             'condition' => ['feature !=' => 1],
         ];
         $news = $this->paginate($this->News);
-
         $this->set(compact('news'));
     }
 

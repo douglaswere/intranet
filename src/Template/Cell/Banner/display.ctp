@@ -1,12 +1,12 @@
+<?php foreach ($feature as $news): ?>
 
-    <?php foreach ($feature as $news): ?>
+    <?php
+    $image = $this->Url->build('/' . 'files/' . $news->news_images[0]['name']);
 
-        <?php
-        $image = $this->Url->build('/' . 'files/' . $news->news_images[0]['name']);
-
-        ?>
-
-        <div class="container p-3 p-md-5 text-white bg-dark banner"    style=" background-image: url(<?= $image ?>); background-repeat:no-repeat;background-size: cover">
+    ?>
+    <div class="container-fluid"
+         style=" background-image: url(<?= $image ?>); background-repeat:no-repeat;background-size: cover">
+        <div class="container p-3 p-md-5 text-white ">
             <div class="row">
                 <div class="col-md-8 ">
                     <h1 class="display-4 font-italic"><?= h($news->title) ?></h1>
@@ -20,8 +20,13 @@
                             </p>
                         </div>
                         <div class="col-md-12 ">
-                            <button type="button" class="btn btn-primary btn-lg btn-block btn-block-web"><i id="fa-support" class="fas fa-file"></i> WebDev Ticket</button>
-                            <button type="button" class="btn btn-secondary btn-lg btn-block"><i id="fa-support" class="fas fa-file"></i>   IIT Ticket</button>
+                            <button type="button" class="btn btn-primary btn-lg btn-block btn-block-web"><i
+                                    id="fa-support" class="fas fa-file"></i> WebDev Ticket
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-lg btn-block"><i id="fa-support"
+                                                                                                class="fas fa-file"></i>
+                                IIT Ticket
+                            </button>
                         </div>
 
                     </div>
@@ -29,12 +34,12 @@
                 </div>
             </div>
         </div>
-        <div class="text-center">
-
-            <h2 class="main-h2 py-3"><?= h($news->title) ?></h2>
-            <p class="main-p py-3"><?= strip_tags($news->text) ?>.</p>
-        </div>
-    <?php endforeach; ?>
+    </div>
+    <div class="text-center">
+        <h2 class="main-h2 py-3"><?= h($news->title) ?></h2>
+        <p class="main-p py-3"><?= strip_tags($news->text) ?>.</p>
+    </div>
+<?php endforeach; ?>
 
 
 

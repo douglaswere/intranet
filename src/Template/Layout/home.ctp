@@ -34,7 +34,7 @@
         }
     </style>
 <body>
-<div class="container">
+<div class="container-fluid">
     <div class="col-md-12">
         <div class="row blog-header ">
             <div class="col-md-12  py-3">
@@ -64,7 +64,8 @@
     <?= $this->Flash->render() ?>
 
     <?= $this->fetch('content') ?>
-    <?= $this->element('footer'); ?>
+
 </main><!-- /.container -->
+<?= $this->element('footer'); ?>
 </body>
 </html>
