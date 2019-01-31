@@ -463,7 +463,14 @@ footer a {
 }
 
 .form-control {
-    height: calc(2.25rem + 6px);
+    height: calc(2.00rem + 2px);
+    line-height: 1;
+}
+input[type=checkbox], input[type=radio] {
+    box-sizing: border-box;
+    padding: 0;
+   height: 20px;
+    width: 20px;
 }
 
 .h3-news {
