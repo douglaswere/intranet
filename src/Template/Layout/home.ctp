@@ -34,7 +34,7 @@
         }
     </style>
 <body>
-<div class="container-fluid">
+<div class="container">
     <div class="col-md-12">
         <div class="row blog-header ">
             <div class="col-md-12  py-3">

@@ -132,7 +132,7 @@ class NewsController extends AppController
         $client = new Google_Client();
         $client->setApplicationName('Intranet');
         $client->setScopes(Google_Service_Drive::DRIVE_METADATA_READONLY);
-        $dir = WWW_ROOT . '\\';
+       $dir = WWW_ROOT . '\\';
         $client->setAuthConfig($dir.'credentials.json');
         $client->setAccessType('offline');
         $client->setPrompt('select_account consent');
