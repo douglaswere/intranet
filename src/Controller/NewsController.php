@@ -65,6 +65,38 @@ class NewsController extends AppController
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      * @throws \Exception
      */
+    public function printing()
+    {
+        $dir = ROOT . '\\';
+        if (file_exists($dir . "credentials.json")) {
+            $access_token = (file_get_contents($dir . "credentials.json"));
+            echo '<pre>';
+            var_dump($access_token);
+            exit;
+        }else{
+            echo '<pre>nothing';
+
+            exit;
+
+
+        }
+
+
+    }
+
+    public function gapi()
+    {
+        require_once ROOT . '/vendor/autoload.php';
+        $dir = WWW_ROOT . '\\';
+        $client = new Google_Client();
+        $client->setAuthConfig($dir . 'client_id.json');
+        $client->setApplicationName('Intranet');
+        $client->addScope(Google_Service_Drive::DRIVE);
+        return $client;
+
+
+    }
+
     public function add()
     {
 
@@ -78,20 +110,32 @@ class NewsController extends AppController
             $info = $this->request->getData();
             $file = $info['image'];
 
-
             // $this->loadComponent('Google');
-
+            $dir = WWW_ROOT . '\\';
             $client = new Google_Client();
-            $client->setApplicationName("Intranet");
-            $client->setClientId('596939720488-i4akog36fmqnmc6a6p5vcmroc6uhq907.apps.googleusercontent.com');
-            $client->setClientSecret('WekTC18QravDTTge1LR7ZGoc');
-            $client->setRedirectUri(null);
-            $client->setDeveloperKey("AIzaSyANOdH2iJ88MxoPV9ExEWsC94saSW2-nPo");
-            $client->setApprovalPrompt('auto');
-            $client->setAccessType('offline');
+            $client->setAuthConfig($dir . 'client_id.json');
+            $client->setApplicationName('Intranet');
+            $client->addScope(Google_Service_Drive::DRIVE);
 
-            // $service = $this->Google->getService();
+            if (file_exists($dir . "credentials.json")) {
+                $access_token = (file_get_contents($dir . "credentials.json"));
+                echo '<pre>';
+                var_dump($access_token);
+                $client->setAccessToken($access_token);
+                //Refresh the token if it's expired.
+                if ($client->isAccessTokenExpired()) {
+                    $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+                    file_put_contents($dir . "cregit dentials.json", json_encode($client->getAccessToken()));
+                }
+                $drive_service = new Google_Service_Drive($client);
+                $files_list = $drive_service->files->listFiles(array())->getFiles();
+                echo json_encode($files_list);
+            } else {
+                $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+                header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+            }
 
+            exit;
             $service = new \Google_Service_Drive($client);
 
             $fileMetadata = new \Google_Service_Drive_DriveFile(array(
