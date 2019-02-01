@@ -17,6 +17,7 @@ use Google_Service_Drive;
 class NewsController extends AppController
 {
 
+
     /**
      * Index method
      *
@@ -62,6 +63,7 @@ class NewsController extends AppController
      * Add method
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     * @throws \Exception
      */
     public function add()
     {
@@ -69,27 +71,61 @@ class NewsController extends AppController
         $news = $this->News->newEntity();
         $news->user_id = 1;
 
-        if ($this->getRequest()->is('post')) {
+
+        if ($this->request->is(['post'])) {
 
 
-            $client = $this->getClient();
-            $service = new Google_Service_Drive($client);
+            $info = $this->request->getData();
+            $file = $info['image'];
 
-// Print the names and IDs for up to 10 files.
-            $optParams = array(
-                'pageSize' => 10,
-                'fields' => 'nextPageToken, files(id, name)'
-            );
-            $results = $service->files->listFiles($optParams);
 
-            if (count($results->getFiles()) == 0) {
-                print "No files found.\n";
-            } else {
-                print "Files:\n";
-                foreach ($results->getFiles() as $file) {
-                    printf("%s (%s)\n", $file->getName(), $file->getId());
-                }
-            }
+            // $this->loadComponent('Google');
+
+            $client = new Google_Client();
+            $client->setApplicationName("Intranet");
+            $client->setClientId('596939720488-i4akog36fmqnmc6a6p5vcmroc6uhq907.apps.googleusercontent.com');
+            $client->setClientSecret('WekTC18QravDTTge1LR7ZGoc');
+            $client->setRedirectUri(null);
+            $client->setDeveloperKey("AIzaSyANOdH2iJ88MxoPV9ExEWsC94saSW2-nPo");
+            $client->setApprovalPrompt('auto');
+            $client->setAccessType('offline');
+
+            // $service = $this->Google->getService();
+
+            $service = new \Google_Service_Drive($client);
+
+            $fileMetadata = new \Google_Service_Drive_DriveFile(array(
+                'name' => $file['name']));
+            $content = file_get_contents($file['tmp_name']);
+            $file_drive = $service->files->create($fileMetadata, array(
+                'data' => $content,
+                'mimeType' => 'image/jpeg',
+                'uploadType' => 'multipart',
+                'fields' => 'id'));
+            printf("File ID: %s\n", $file_drive->id);
+
+            /* $optParams = array('filter' => 'free-ebooks');
+             $results = $service->volumes->listVolumes('Henry David Thoreau', $optParams);
+             foreach ($results as $item) {
+                 echo $item['volumeInfo']['title'], "<br /> \n";
+             }*/
+
+            /*if ($service) {
+
+                $file_drive = new \Google_Service_Drive_DriveFile();
+                $file_drive->setName($file['name']);
+                $file_drive->setDescription('A test document');
+                $file_drive->setMimeType('text/plain');
+                $data = file_get_contents($file['tmp_name']);
+                $createdFile = $service->files->create($file_drive, array(
+                    'data' => $data,
+                    'mimeType' => 'image/jpeg',
+                ));
+
+                print_r($createdFile);
+            }*/
+
+
             exit;
 
             $news = $this->News->patchEntity($news, $this->request->getData());
@@ -132,8 +168,8 @@ class NewsController extends AppController
         $client = new Google_Client();
         $client->setApplicationName('Intranet');
         $client->setScopes(Google_Service_Drive::DRIVE_METADATA_READONLY);
-       $dir = WWW_ROOT . '\\';
-        $client->setAuthConfig($dir.'credentials.json');
+        $dir = WWW_ROOT . '\\';
+        $client->setAuthConfig($dir . 'credentials.json');
         $client->setAccessType('offline');
         $client->setPrompt('select_account consent');
 
@@ -142,7 +178,7 @@ class NewsController extends AppController
         // created automatically when the authorization flow completes for the first
         // time.
 
-        $tokenPath =  $dir.'token.json';
+        $tokenPath = $dir . 'token.json';
         if (file_exists($tokenPath)) {
             $accessToken = json_decode(file_get_contents($tokenPath), true);
             $client->setAccessToken($accessToken);
