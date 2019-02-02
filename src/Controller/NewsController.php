@@ -67,11 +67,22 @@ class NewsController extends AppController
      */
     public function printing()
     {
+        $client = new Google_Client();
         $dir = ROOT . '\\';
         if (file_exists($dir . "credentials.json")) {
             $access_token = (file_get_contents($dir . "credentials.json"));
             echo '<pre>';
             var_dump($access_token);
+            $client->setAccessToken($access_token);
+            //Refresh the token if it's expired.
+            if ($client->isAccessTokenExpired()) {
+                $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+                file_put_contents($dir . "cregit dentials.json", json_encode($client->getAccessToken()));
+            }
+            $drive_service = new Google_Service_Drive($client);
+            $files_list = $drive_service->files->listFiles(array())->getFiles();
+            var_dump($files_list);
+            echo json_encode($files_list);
             exit;
         }else{
             echo '<pre>nothing';
@@ -84,18 +95,6 @@ class NewsController extends AppController
 
     }
 
-    public function gapi()
-    {
-        require_once ROOT . '/vendor/autoload.php';
-        $dir = WWW_ROOT . '\\';
-        $client = new Google_Client();
-        $client->setAuthConfig($dir . 'client_id.json');
-        $client->setApplicationName('Intranet');
-        $client->addScope(Google_Service_Drive::DRIVE);
-        return $client;
-
-
-    }
 
     public function add()
     {
@@ -106,12 +105,11 @@ class NewsController extends AppController
 
         if ($this->request->is(['post'])) {
 
-
             $info = $this->request->getData();
             $file = $info['image'];
 
             // $this->loadComponent('Google');
-            $dir = WWW_ROOT . '\\';
+            $dir = ROOT . '\\';
             $client = new Google_Client();
             $client->setAuthConfig($dir . 'client_id.json');
             $client->setApplicationName('Intranet');
