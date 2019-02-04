@@ -50,9 +50,9 @@
                 <span class="small" href="#">SCCIT </span><span class="bold"> INTRANET</span>
             </div>
             <div class="col-md-12 ">
-                <div class="float-right">
+                <div class="float-right  py-2">
                     <i id="fa-lock" class="fa fa-lock"></i>  <a href="#" class="separator-right"> Login</a>
-                    <i id="fa-support" class="fa fa-question-circle"></i>  <a href="#"> Support</a> |
+                    <i id="fa-support" class="fa fa-question-circle "></i>  <a href="#"> Support</a> |
                 </div>
             </div>
             <?= $this->cell('Menu'); ?>
