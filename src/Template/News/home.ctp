@@ -11,7 +11,7 @@ $this->extend('/Common/centerPage')
 
 <div class="row">
     <div class="col-md-12 blog-main">
-        <div class="row">
+        <div class="row py-2">
             <div class="col-md-10">
                 <span class="pb-3 mb-4 h3-semi text-left">NEWS & ANNOUNCEMENTS</span>
             </div>

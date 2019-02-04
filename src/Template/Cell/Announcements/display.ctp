@@ -8,7 +8,7 @@
             break;
         case 1:
             $alert = 'alert-warning';
-            $fa = 'fa-exclamation-circle';
+            $fa = 'exclamation-circle';
             break;
         case 2:
             $alert = 'alert-success';
