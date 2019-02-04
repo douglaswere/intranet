@@ -26,7 +26,7 @@ class NewsController extends AppController
     public function index()
     {
         $this->paginate = [
-            'contain' => ['Users']
+            'contain' => ['Users', 'NewsImages']
         ];
         $news = $this->paginate($this->News);
         $this->set(compact('news'));
@@ -65,6 +65,42 @@ class NewsController extends AppController
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      * @throws \Exception
      */
+
+    public function google()
+    {
+        // $this->loadComponent('Google');
+        $dir = ROOT . '\\';
+        $client = new Google_Client();
+        $client->setAuthConfig($dir . 'client_id.json');
+        $client->setApplicationName('Intranet');
+        $client->addScope(Google_Service_Drive::DRIVE);
+
+        if (file_exists($dir . "credentials.json")) {
+            $access_token = (file_get_contents($dir . "credentials.json"));
+            echo '<pre>';
+            var_dump($access_token);
+            $client->setAccessToken($access_token);
+            //Refresh the token if it's expired.
+            if ($client->isAccessTokenExpired()) {
+                $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+                file_put_contents($dir . "cregit dentials.json", json_encode($client->getAccessToken()));
+            }
+            $drive_service = new Google_Service_Drive($client);
+            $files_list = $drive_service->files->listFiles(array())->getFiles();
+            echo json_encode($files_list);
+            $this->redirect(['controller' => 'add']);
+
+        } else {
+            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+            header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+
+            $this->redirect(['controller' => 'add']);
+            exit;
+        }
+
+
+    }
+
     public function printing()
     {
         $client = new Google_Client();
@@ -84,41 +120,39 @@ class NewsController extends AppController
             var_dump($files_list);
             echo json_encode($files_list);
             exit;
-        }else{
+        } else {
             echo '<pre>nothing';
-
             exit;
-
-
         }
 
 
     }
 
-
     public function add()
     {
 
         $news = $this->News->newEntity();
-        $news->user_id = 1;
+        $dir = ROOT . '\\';
 
 
         if ($this->request->is(['post'])) {
+
+            if (!file_exists($dir . "credentials.json")) {
+
+                return $this->redirect(['action' => 'google']);
+            }
 
             $info = $this->request->getData();
             $file = $info['image'];
 
             // $this->loadComponent('Google');
-            $dir = ROOT . '\\';
             $client = new Google_Client();
-            $client->setAuthConfig($dir . 'client_id.json');
-            $client->setApplicationName('Intranet');
-            $client->addScope(Google_Service_Drive::DRIVE);
+
 
             if (file_exists($dir . "credentials.json")) {
                 $access_token = (file_get_contents($dir . "credentials.json"));
-                echo '<pre>';
-                var_dump($access_token);
+              /*  echo '<pre>';
+                var_dump($access_token);*/
                 $client->setAccessToken($access_token);
                 //Refresh the token if it's expired.
                 if ($client->isAccessTokenExpired()) {
@@ -127,75 +161,55 @@ class NewsController extends AppController
                 }
                 $drive_service = new Google_Service_Drive($client);
                 $files_list = $drive_service->files->listFiles(array())->getFiles();
-                echo json_encode($files_list);
+                // echo json_encode($files_list);
+
+
+                $file_drive = new \Google_Service_Drive_DriveFile();
+                $file_drive->setName($file['name']);
+                $file_drive->setDescription('A test document');
+                $file_drive->setMimeType('image/jpeg');
+                $data = file_get_contents($file['tmp_name']);
+                $createdFile = $drive_service->files->create($file_drive, array(
+                    'data' => $data,
+                    'mimeType' => 'image/jpeg',
+                ));
+
+              //  print_r($createdFile);
+
+                $google_id =  $createdFile->id;
+                $news = $this->News->patchEntity($news, $this->request->getData());
+                $news->user_id = 1;
+                if ($this->News->save($news)) {
+                    $this->loadModel('NewsImages');
+                    $image = $this->NewsImages->newEntity();
+                    $dir = WWW_ROOT . 'files\\';
+                    if (move_uploaded_file($file['tmp_name'], $dir . $file['name'])) {
+
+                        $this->request->data['filename'] = $file['name'];
+                        $size = getimagesize($file['tmp_name'], $info);
+                        $newsImage = $this->NewsImages->patchEntity($image, $file);
+                        $newsImage->news_id = $news->id;
+                        $newsImage->height = $size[0];
+                        $newsImage->width = $size[1];
+                        $newsImage->feature = $news->feature;
+                        // $newsImage->url = $dir . $file['name'];
+                        $newsImage->url =  $google_id;
+                        if ($this->NewsImages->save($newsImage)) {
+                            $this->Flash->success(__('The image file has been saved.'));
+                        }
+                    }
+                    $this->Flash->success(__('The news has been saved.'));
+
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The news could not be saved. Please, try again.'));
+
             } else {
                 $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
                 header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
             }
 
-            exit;
-            $service = new \Google_Service_Drive($client);
 
-            $fileMetadata = new \Google_Service_Drive_DriveFile(array(
-                'name' => $file['name']));
-            $content = file_get_contents($file['tmp_name']);
-            $file_drive = $service->files->create($fileMetadata, array(
-                'data' => $content,
-                'mimeType' => 'image/jpeg',
-                'uploadType' => 'multipart',
-                'fields' => 'id'));
-            printf("File ID: %s\n", $file_drive->id);
-
-            /* $optParams = array('filter' => 'free-ebooks');
-             $results = $service->volumes->listVolumes('Henry David Thoreau', $optParams);
-             foreach ($results as $item) {
-                 echo $item['volumeInfo']['title'], "<br /> \n";
-             }*/
-
-            /*if ($service) {
-
-                $file_drive = new \Google_Service_Drive_DriveFile();
-                $file_drive->setName($file['name']);
-                $file_drive->setDescription('A test document');
-                $file_drive->setMimeType('text/plain');
-                $data = file_get_contents($file['tmp_name']);
-                $createdFile = $service->files->create($file_drive, array(
-                    'data' => $data,
-                    'mimeType' => 'image/jpeg',
-                ));
-
-                print_r($createdFile);
-            }*/
-
-
-            exit;
-
-            $news = $this->News->patchEntity($news, $this->request->getData());
-            if ($this->News->save($news)) {
-
-                $this->loadModel('NewsImages');
-                $image = $this->NewsImages->newEntity();
-
-                $dir = WWW_ROOT . 'files\\';
-                if (move_uploaded_file($file['tmp_name'], $dir . $file['name'])) {
-
-                    $this->request->data['filename'] = $file['name'];
-                    $size = getimagesize($file['tmp_name'], $info);
-                    $newsImage = $this->NewsImages->patchEntity($image, $file);
-                    $newsImage->news_id = $news->id;
-                    $newsImage->height = $size[0];
-                    $newsImage->width = $size[1];
-                    $newsImage->feature = $news->feature;
-                    $newsImage->url = $dir . $file['name'];
-                    if ($this->NewsImages->save($newsImage)) {
-                        $this->Flash->success(__('The image file has been saved.'));
-                    }
-                }
-                $this->Flash->success(__('The news has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The news could not be saved. Please, try again.'));
         }
         $users = $this->News->Users->find('list', ['limit' => 200]);
         $files = $this->News->Files->find('list', ['limit' => 200]);

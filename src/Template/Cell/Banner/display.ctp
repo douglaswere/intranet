@@ -5,7 +5,7 @@
 
     ?>
     <div class="container-fluid"
-         style=" background-image: url(<?= $image ?>); background-repeat:no-repeat;background-size: cover">
+         style=" background-image: url('https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>'); background-repeat:no-repeat;background-size: cover">
         <div class="container p-3 p-md-5 text-white ">
             <div class="row">
                 <div class="col-md-8 ">

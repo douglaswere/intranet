@@ -32,9 +32,8 @@ $this->extend('/Common/centerPage')
                     <div class="card mb-4 shadow-sm">
                         <?php
                         $image = $this->Url->build('/' . 'files/' . $news->news_images[0]['name']);
-
                         ?>
-                        <img src="<?= $image; ?>" class="img-fluid" alt="article">
+                        <img src="https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>" class="img-fluid" alt="article">
                     </div>
                 </div>
 

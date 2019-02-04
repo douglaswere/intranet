@@ -20,21 +20,29 @@
     <h3><?= __('News') ?></h3>
     <table cellpadding="0" cellspacing="0" class="table-bordered table table-responsive">
         <thead>
-            <tr>
-                <th scope="col"><?= $this->Paginator->sort('id') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('title') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('user_id') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('feature') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('date_submitted') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('date_modified') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('date_approved') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('date_expires') ?></th>
-                <th scope="col" class="actions"><?= __('Actions') ?></th>
-            </tr>
+        <tr>
+            <th>#</th>
+            <th scope="col"><?= $this->Paginator->sort('id') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('title') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('user_id') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('feature') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('date_submitted') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('date_modified') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('date_approved') ?></th>
+            <th scope="col"><?= $this->Paginator->sort('date_expires') ?></th>
+            <th scope="col" class="actions"><?= __('Actions') ?></th>
+        </tr>
         </thead>
         <tbody>
-            <?php foreach ($news as $news): ?>
+        <?php foreach ($news as $news): ?>
             <tr>
+                <td>
+                    <?php
+                    //$image = $this->Url->build('/' . 'files/' . $news->news_images['0']['name']);
+                    $image = "https://drive.google.com/file/d/1_UzqCvORabWYalzR_uITMBRF-FEOmJfG/view";
+                   // echo $news->news_images[0]["url"];
+                    ?>
+                    <img src="https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>" height="50px" alt="<?php echo $news->news_images['0']['url']; ?>"></td>
                 <td><?= $this->Number->format($news->id) ?></td>
                 <td><?= h($news->title) ?></td>
                 <td><?= $news->has('user') ? $this->Html->link($news->user->title, ['controller' => 'Users', 'action' => 'view', $news->user->id]) : '' ?></td>
@@ -49,7 +57,7 @@
                     <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $news->id], ['confirm' => __('Are you sure you want to delete # {0}?', $news->id)]) ?>
                 </td>
             </tr>
-            <?php endforeach; ?>
+        <?php endforeach; ?>
         </tbody>
     </table>
     <div class="paginator">
