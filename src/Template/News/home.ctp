@@ -5,24 +5,22 @@
  */
 $this->extend('/Common/centerPage')
 ?>
-
-<?php $this->start('links'); ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-
-        <li><?= $this->Html->link(__('Publish Article/news'), ['action' => 'add']) ?></li>
-
-    </ul>
-</nav>
-<?php $this->end(); ?>
-
 <?php $this->start('center'); ?>
 
 <?php echo $this->cell('Banner'); ?>
 
 <div class="row">
     <div class="col-md-12 blog-main">
-        <h3 class="pb-3 mb-4 h3-semi">NEWS & ANNOUNCEMENTS</h3>
+        <div class="row">
+            <div class="col-md-10">
+                <span class="pb-3 mb-4 h3-semi text-left">NEWS & ANNOUNCEMENTS</span>
+            </div>
+
+            <div class="col-md-2">
+                <span
+                    class="text-right"><?= $this->Html->link(__('Submit News Article'), ['action' => 'add'], ['class' => 'draft']) ?></span>
+            </div>
+        </div>
         <?php echo $this->cell('Announcements'); ?>
 
         <?php //echo $this->cell('announcements'); ?>
@@ -34,13 +32,32 @@ $this->extend('/Common/centerPage')
                         <?php
                         $image = $this->Url->build('/' . 'files/' . $news->news_images[0]['name']);
                         ?>
-                        <img src="https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>" class="img-fluid" alt="article">
+                        <img
+                            src="https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>"
+                            class="img-fluid" alt="article">
                     </div>
                 </div>
 
                 <div class="col-md-8">
                     <h2 class="blog-post-title"><?= h($news->title) ?></h2>
-                    <p class="main-p"><?= strip_tags($news->text) ?></p>
+                    <p class="main-p">
+                        <?php
+
+                        $string = strip_tags($news->text);
+                        if (strlen($string) > 200) {
+
+                            // truncate string
+                            $stringCut = substr($string, 0, 200);
+                            $endPoint = strrpos($stringCut, ' ');
+
+                            //if the string doesn't contain any space then it will cut without word basis.
+                            $string = $endPoint ? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+                            $string .= '...';
+                        }
+                        echo $string;
+                        ?>
+
+                    </p>
 
                     <h3>
                         <?= $this->Html->link(__('Read more'), ['action' => 'view', $news->id], ['class' => 'a-h3']) ?>
@@ -60,7 +77,6 @@ $this->extend('/Common/centerPage')
         <?php endforeach; ?>
 
 
-
     </div><!-- /.blog-post -->
     <div class="container py-3">
         <div class="text-center py-3">
@@ -70,18 +86,19 @@ $this->extend('/Common/centerPage')
         </div>
 
         <div class="text-center py-3">
-            <div class="pagination">
-
-            </div>
             <div class="paginator">
-                <ul class="pagination">
-                    <?= $this->Paginator->first('<< ' . __('first')) ?>
-                    <?= $this->Paginator->prev('< ' . __('previous')) ?>
-                    <?= $this->Paginator->numbers() ?>
-                    <?= $this->Paginator->next(__('next') . ' >') ?>
-                    <?= $this->Paginator->last(__('last') . ' >>') ?>
-                </ul>
-                <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
+                <div class="text-center py-3">
+                    <ul class="pagination">
+                        <?= $this->Paginator->first('<< ' . __('first')) ?>
+                        <?= $this->Paginator->prev('< ' . __('previous')) ?>
+                        <?= $this->Paginator->numbers() ?>
+                        <?= $this->Paginator->next(__('next') . ' >') ?>
+                        <?= $this->Paginator->last(__('last') . ' >>') ?>
+                    </ul>
+                </div>
+                <div class="text-center py-3">
+                    <p class="text-center text-capitalize"><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
+                </div>
             </div>
         </div>
 

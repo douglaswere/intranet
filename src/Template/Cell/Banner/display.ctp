@@ -9,7 +9,7 @@
         <div class="container p-3 p-md-5 text-white ">
             <div class="row">
                 <div class="col-md-8 ">
-                    <h1 class="display-4 font-italic"><?= h($news->title) ?></h1>
+                    <h1 class="display-4 font-italic"></h1>
                 </div>
                 <div class="col-md-4 py-3" style="background: #1b1e21">
                     <div class="row">
@@ -36,8 +36,28 @@
         </div>
     </div>
     <div class="text-center">
-        <h2 class="main-h2 py-3"><?= h($news->title) ?></h2>
-        <p class="main-p py-3"><?= strip_tags($news->text) ?>.</p>
+    <h2 class="main-h2 py-3"><?= strip_tags($news->title) ?></h2>
+        <p class="main-p py-3">
+            <?php
+            $string = strip_tags($news->text);
+            if (strlen($string) > 500) {
+
+                // truncate string
+                $stringCut = substr($string, 0, 500);
+                $endPoint = strrpos($stringCut, ' ');
+
+                //if the string doesn't contain any space then it will cut without word basis.
+                $string = $endPoint ? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+                $string .= '...';
+            }
+            echo $string;
+            ?>.
+        </p>
+
+        <h3>
+            <?= $this->Html->link(__('Read full article'), ['action' => 'view', $news->id], ['class' => 'a-h3']) ?>
+
+        </h3>
     </div>
 <?php endforeach; ?>
 
