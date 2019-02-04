@@ -23,6 +23,7 @@ $this->extend('/Common/centerPage')
 <div class="row">
     <div class="col-md-12 blog-main">
         <h3 class="pb-3 mb-4 h3-semi">NEWS & ANNOUNCEMENTS</h3>
+        <?php echo $this->cell('Announcements'); ?>
 
         <?php //echo $this->cell('announcements'); ?>
         <?php foreach ($news as $news): ?>

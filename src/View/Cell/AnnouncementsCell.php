@@ -33,5 +33,13 @@ class AnnouncementsCell extends Cell
      */
     public function display()
     {
+        $this->loadModel('Announcements');
+        $query = $this->Announcements->find('all', [
+            'limit' => 1,
+            'order' => ['Announcements.id' => 'DESC']
+        ]);
+        $announcement = $query->all();
+
+        $this->set(compact('announcement'));
     }
 }
