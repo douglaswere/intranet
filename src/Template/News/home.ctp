@@ -18,7 +18,7 @@ $this->extend('/Common/centerPage')
 
             <div class="col-md-2">
                 <span
-                    class="text-right"><?= $this->Html->link(__('Submit News Article'), ['action' => 'add'], ['class' => 'draft']) ?></span>
+                    class="text-right"><?= $this->Html->link(__('Submit News Article'), ['action' => 'google'], ['class' => 'draft']) ?></span>
             </div>
         </div>
         <?php echo $this->cell('Announcements'); ?>
