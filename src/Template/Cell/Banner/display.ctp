@@ -4,9 +4,9 @@
     $image = $this->Url->build('/' . 'files/' . $news->news_images[0]['name']);
 
     ?>
-    <div class="container-fluid"
-         style=" background-image: url('https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>'); background-repeat:no-repeat;background-size: cover">
-        <div class="container p-3 p-md-5 text-white ">
+    <div class="container-fluid" style="background-color:#466a6c; ">
+        <div class="container p-3 p-md-5 text-white "
+             style=" background-image: url('https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>'); background-size: cover;">
             <div class="row">
                 <div class="col-md-8 ">
                     <h1 class="display-4 font-italic"></h1>
