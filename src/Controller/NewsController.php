@@ -40,6 +40,8 @@ class NewsController extends AppController
         $this->paginate = [
             'contain' => ['Users', 'NewsImages'],
             'condition' => ['feature !=' => 1],
+            'limit' => 5
+
         ];
         $news = $this->paginate($this->News);
         $this->set(compact('news'));
