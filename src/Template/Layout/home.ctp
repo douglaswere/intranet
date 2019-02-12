@@ -16,56 +16,62 @@
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 
 
 </head>
 
-    <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-        }
+<style>
+    .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+    }
 
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
+    @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+            font-size: 3.5rem;
         }
-    </style>
+    }
+</style>
 <body>
-<div class="container">
-    <div class="col-md-12">
-        <div class="row blog-header ">
-            <div class="col-md-12  py-3">
-                <div class="float-right">
-                    <form id="search-form" name="search-form">
-                        <input id="filter" class="search-input" type="text" placeholder="Search" />
-                        <i id="filtersubmit" class="fa fa-search"></i>
+<div class="row">
+    <div class="container-fluid">
+        <div class="col-md-12">
+            <div class="row blog-header ">
+                <div class="col-md-12  py-3">
+                    <div class="float-right">
+                        <form id="search-form" name="search-form">
+                            <input id="filter" class="search-input" type="text" placeholder="Search"/>
+                            <i id="filtersubmit" class="fa fa-search"></i>
 
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-12  text-center flex-nowrap justify-content-between align-items-center">
-                <span class="small" href="#">SCCIT </span><span class="bold"> INTRANET</span>
-            </div>
-            <div class="col-md-12 ">
-                <div class="float-right  py-2">
-                    <i id="fa-lock" class="fa fa-lock"></i>  <a href="#" class="separator-right"> Login</a>
-                    <i id="fa-support" class="fa fa-question-circle "></i>  <a href="#"> Support</a> |
+                <div class="col-md-12  text-center flex-nowrap justify-content-between align-items-center">
+                    <span class="small" href="#">SCCIT </span><span class="bold"> INTRANET</span>
                 </div>
+                <div class="col-md-12 ">
+                    <div class="float-right  py-2">
+                        <i id="fa-lock" class="fa fa-lock"></i> <a href="#" class="separator-right"> Login</a>
+                        <i id="fa-support" class="fa fa-question-circle "></i> <a href="#"> Support</a> |
+                    </div>
+                </div>
+                <?= $this->cell('Menu'); ?>
             </div>
-            <?= $this->cell('Menu'); ?>
         </div>
     </div>
 </div>
-<main role="main" class="container">
+<div class="row">
+    <div class="container-fluid">
+        <?= $this->Flash->render() ?>
+        <?= $this->fetch('content') ?>
+    </div><!-- /.container -->
+    <div class="container-fluid">
+        <?= $this->element('footer'); ?>
 
-    <?= $this->Flash->render() ?>
+    </div>
+</div>
 
-    <?= $this->fetch('content') ?>
-
-</main><!-- /.container -->
-<?= $this->element('footer'); ?>
 </body>
 </html>

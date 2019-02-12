@@ -37,7 +37,7 @@
     </div>
     <div class="text-center">
     <h2 class="main-h2 py-3"><?= strip_tags($news->title) ?></h2>
-        <p class="main-p py-3">
+        <p class="container-fluid main-p py-3">
             <?php
             $string = strip_tags($news->text);
             if (strlen($string) > 500) {

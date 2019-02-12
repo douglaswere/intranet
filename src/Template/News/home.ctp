@@ -9,7 +9,7 @@ $this->extend('/Common/centerPage')
 
 <?php echo $this->cell('Banner'); ?>
 
-<div class="row">
+<div class="container">
     <div class="col-md-12 blog-main">
         <div class="row py-2">
             <div class="col-md-10">
@@ -18,11 +18,11 @@ $this->extend('/Common/centerPage')
 
             <div class="col-md-2">
                 <span
-                    class="text-right"><?= $this->Html->link(__('Submit News Article'), ['action' => 'google'], ['class' => 'draft']) ?></span>
+                    class="text-right"><?= $this->Html->link(__('Submit News Article'), ['action' => 'google'],
+                        ['class' => 'draft']) ?></span>
             </div>
         </div>
         <?php echo $this->cell('Announcements'); ?>
-
         <?php //echo $this->cell('announcements'); ?>
         <?php foreach ($news as $news): ?>
 
@@ -67,12 +67,11 @@ $this->extend('/Common/centerPage')
                 </div>
                 <div class="col-md-2 d-flex justify-content-center">
                     <p class="blog-post-meta"><?= h($news->date_submitted) ?> by <a
-                            href="#"><?= $news->has('user') ? $this->Html->link($news->user->first_name, ['controller' => 'Users', 'action' => 'view', $news->user->first_name]) : '' ?></a>
+                            href="#"><?= $news->has('user') ? $this->Html->link($news->user->first_name,
+                                ['controller' => 'Users', 'action' => 'view', $news->user->first_name]) : '' ?></a>
                     </p>
                 </div>
-
             </div>
-
             <hr>
         <?php endforeach; ?>
 
