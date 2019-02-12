@@ -6,6 +6,8 @@ use App\Controller\AppController;
 use Cake\Event\Event;
 use Google_Client;
 use Google_Service_Drive;
+use Google_Service_Drive_Permission;
+use Google_Service_Exception;
 
 /**
  * News Controller
@@ -171,6 +173,35 @@ class NewsController extends AppController
             ));
 
             $google_id = $createdFile->id;
+
+            $fileId = $createdFile->id;
+            $drive_service->getClient()->setUseBatch(true);
+            try {
+                $batch =  $drive_service->createBatch();
+
+
+                $domainPermission = new Google_Service_Drive_Permission(array(
+                    'type' => 'domain',
+                    'role' => 'reader',
+                    'domain' => 'global'
+                ));
+                $request =  $drive_service->permissions->create(
+                    $fileId, $domainPermission, array('fields' => 'id'));
+                $batch->add($request, 'domain');
+                $results = $batch->execute();
+
+                foreach ($results as $result) {
+                    if ($result instanceof Google_Service_Exception) {
+                        // Handle error
+                        printf($result);
+                    } else {
+                        printf("Permission ID: %s\n", $result->id);
+                    }
+                }
+            } finally {
+                $drive_service->getClient()->setUseBatch(false);
+            }
+
             $news = $this->News->patchEntity($news, $this->request->getData());
             $news->user_id = 1;
             if ($this->News->save($news)) {

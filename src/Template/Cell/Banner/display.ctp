@@ -4,8 +4,8 @@
     $image = $this->Url->build('/' . 'files/' . $news->news_images[0]['name']);
 
     ?>
-    <div class="container-fluid" style="background-color:#466a6c; ">
-        <div class="container p-3 p-md-5 text-white "
+    <div class="container-fluid" style=" background-image: linear-gradient(to right, #46696B 50% , #BFDEA3 50%); ">
+        <div class="container py-lg-5 py-5 text-white "
              style=" background-image: url('https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>'); background-size: cover;">
             <div class="row">
                 <div class="col-md-8 ">
