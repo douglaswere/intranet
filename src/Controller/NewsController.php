@@ -66,7 +66,7 @@ class NewsController extends AppController
      * @throws \Exception
      */
 
-    public function google()
+    public function google_()
     {
         // $this->loadComponent('Google');
 
@@ -95,16 +95,16 @@ class NewsController extends AppController
             return $this->redirect(['controller' => 'news', 'action' => 'add']);
 
         } else {
-            /*  $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/intranet/oauth/callback';
-              header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));*/
-            return $this->redirect(['controller' => 'Oauth', 'action' => 'callback']);
+              $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+              header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+           // return $this->redirect(['controller' => 'Oauth', 'action' => 'callback']);
 
         }
 
 
     }
 
-    public function printing()
+    public function google()
     {
         $client = new Google_Client();
         $dir = ROOT . '\\';
@@ -116,7 +116,7 @@ class NewsController extends AppController
             //Refresh the token if it's expired.
             if ($client->isAccessTokenExpired()) {
                 $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-                file_put_contents($dir . "cregit dentials.json", json_encode($client->getAccessToken()));
+                file_put_contents($dir . "credentials.json", json_encode($client->getAccessToken()));
             }
             $drive_service = new Google_Service_Drive($client);
             $files_list = $drive_service->files->listFiles(array())->getFiles();
@@ -124,7 +124,8 @@ class NewsController extends AppController
             echo json_encode($files_list);
             exit;
         } else {
-            echo '<pre>nothing';
+            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+            header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
             exit;
         }
 
@@ -149,6 +150,8 @@ class NewsController extends AppController
             $access_token = (file_get_contents($dir . "credentials.json"));
 
             $client->setAccessToken($access_token);
+            $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
+            $client->setHttpClient($guzzleClient);
             //Refresh the token if it's expired.
             if ($client->isAccessTokenExpired()) {
                 $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());

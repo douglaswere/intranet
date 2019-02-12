@@ -25,12 +25,15 @@ class  OauthController extends AppController
     {
         $dir = ROOT . '\\';
         require_once ROOT.'/vendor'.DS.'autoload.php';
-        $client = new Google_Client();
 
+
+      /*  echo ROOT.'/vendor'.DS.'autoload.php';
+        exit;*/
+        $client = new Google_Client();
         $client->setAuthConfigFile($dir . 'client_id.json');
         $client->setApplicationName('Intranet');
         $client->addScope(Google_Service_Drive::DRIVE);
-        $client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . '/intranet/oauth/callback');
+        $client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . 'cake/intranet/oauth2callback.php');
         $client->addScope(Google_Service_Drive::DRIVE); //::DRIVE_METADATA_READONLY
 
         $params = $this->request->getQueryParams('code');
