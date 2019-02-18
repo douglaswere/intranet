@@ -1,19 +1,19 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\NewsImage[]|\Cake\Collection\CollectionInterface $newsImages
+ * @var \App\Model\Entity\Newsimage[]|\Cake\Collection\CollectionInterface $newsimages
  */
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('New News Image'), ['action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('New Newsimage'), ['action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List News'), ['controller' => 'News', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New News'), ['controller' => 'News', 'action' => 'add']) ?></li>
     </ul>
 </nav>
-<div class="newsImages index large-9 medium-8 columns content">
-    <h3><?= __('News Images') ?></h3>
+<div class="newsimages index large-9 medium-8 columns content">
+    <h3><?= __('Newsimages') ?></h3>
     <table cellpadding="0" cellspacing="0">
         <thead>
             <tr>
@@ -29,20 +29,20 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($newsImages as $newsImage): ?>
+            <?php foreach ($newsimages as $newsimage): ?>
             <tr>
-                <td><?= $this->Number->format($newsImage->id) ?></td>
-                <td><?= $newsImage->has('news') ? $this->Html->link($newsImage->news->title, ['controller' => 'News', 'action' => 'view', $newsImage->news->id]) : '' ?></td>
-                <td><?= h($newsImage->name) ?></td>
-                <td><?= $this->Number->format($newsImage->size) ?></td>
-                <td><?= h($newsImage->tmp_name) ?></td>
-                <td><?= h($newsImage->height) ?></td>
-                <td><?= h($newsImage->width) ?></td>
-                <td><?= h($newsImage->feature) ?></td>
+                <td><?= $this->Number->format($newsimage->id) ?></td>
+                <td><?= $newsimage->has('news') ? $this->Html->link($newsimage->news->title, ['controller' => 'News', 'action' => 'view', $newsimage->news->id]) : '' ?></td>
+                <td><?= h($newsimage->name) ?></td>
+                <td><?= $this->Number->format($newsimage->size) ?></td>
+                <td><?= h($newsimage->tmp_name) ?></td>
+                <td><?= h($newsimage->height) ?></td>
+                <td><?= h($newsimage->width) ?></td>
+                <td><?= h($newsimage->feature) ?></td>
                 <td class="actions">
-                    <?= $this->Html->link(__('View'), ['action' => 'view', $newsImage->id]) ?>
-                    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $newsImage->id]) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $newsImage->id], ['confirm' => __('Are you sure you want to delete # {0}?', $newsImage->id)]) ?>
+                    <?= $this->Html->link(__('View'), ['action' => 'view', $newsimage->id]) ?>
+                    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $newsimage->id]) ?>
+                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $newsimage->id], ['confirm' => __('Are you sure you want to delete # {0}?', $newsimage->id)]) ?>
                 </td>
             </tr>
             <?php endforeach; ?>

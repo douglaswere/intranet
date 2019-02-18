@@ -1,14 +1,14 @@
 <?php
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\NewsImagesController;
+use App\Controller\NewsimagesController;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Controller\NewsImagesController Test Case
+ * App\Controller\NewsimagesController Test Case
  */
-class NewsImagesControllerTest extends TestCase
+class NewsimagesControllerTest extends TestCase
 {
     use IntegrationTestTrait;
 
@@ -18,7 +18,7 @@ class NewsImagesControllerTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.NewsImages',
+        'app.Newsimages',
         'app.News'
     ];
 

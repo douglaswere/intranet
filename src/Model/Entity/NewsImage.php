@@ -15,6 +15,7 @@ use Cake\ORM\Entity;
  * @property string|null $width
  * @property string|null $feature
  * @property string|null $url
+ * @property string|null $style
  *
  * @property \App\Model\Entity\News $news
  */
@@ -31,7 +32,6 @@ class NewsImage extends Entity
      * @var array
      */
     protected $_accessible = [
-        'id' => true,
         'news_id' => true,
         'name' => true,
         'size' => true,
@@ -40,6 +40,7 @@ class NewsImage extends Entity
         'width' => true,
         'feature' => true,
         'url' => true,
+        'style' => true,
         'news' => true
     ];
 }

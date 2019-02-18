@@ -4,13 +4,13 @@ namespace App\Controller;
 use App\Controller\AppController;
 
 /**
- * NewsImages Controller
+ * Newsimages Controller
  *
- * @property \App\Model\Table\NewsImagesTable $NewsImages
+ * @property \App\Model\Table\NewsimagesTable $Newsimages
  *
- * @method \App\Model\Entity\NewsImage[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @method \App\Model\Entity\Newsimage[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class NewsImagesController extends AppController
+class NewsimagesController extends AppController
 {
 
     /**
@@ -23,25 +23,25 @@ class NewsImagesController extends AppController
         $this->paginate = [
             'contain' => ['News']
         ];
-        $newsImages = $this->paginate($this->NewsImages);
+        $newsimages = $this->paginate($this->NewsImages);
 
-        $this->set(compact('newsImages'));
+        $this->set(compact('newsimages'));
     }
 
     /**
      * View method
      *
-     * @param string|null $id News Image id.
+     * @param string|null $id Newsimage id.
      * @return \Cake\Http\Response|void
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function view($id = null)
     {
-        $newsImage = $this->NewsImages->get($id, [
+        $newsimage = $this->NewsImages->get($id, [
             'contain' => ['News']
         ]);
 
-        $this->set('newsImage', $newsImage);
+        $this->set('newsimage', $newsimage);
     }
 
     /**
@@ -51,60 +51,60 @@ class NewsImagesController extends AppController
      */
     public function add()
     {
-        $newsImage = $this->NewsImages->newEntity();
+        $newsimage = $this->NewsImages->newEntity();
         if ($this->request->is('post')) {
-            $newsImage = $this->NewsImages->patchEntity($newsImage, $this->request->getData());
-            if ($this->NewsImages->save($newsImage)) {
-                $this->Flash->success(__('The news image has been saved.'));
+            $newsimage = $this->NewsImages->patchEntity($newsimage, $this->request->getData());
+            if ($this->Newsimages->save($newsimage)) {
+                $this->Flash->success(__('The newsimage has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The news image could not be saved. Please, try again.'));
+            $this->Flash->error(__('The newsimage could not be saved. Please, try again.'));
         }
         $news = $this->NewsImages->News->find('list', ['limit' => 200]);
-        $this->set(compact('newsImage', 'news'));
+        $this->set(compact('newsimage', 'news'));
     }
 
     /**
      * Edit method
      *
-     * @param string|null $id News Image id.
+     * @param string|null $id Newsimage id.
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function edit($id = null)
     {
-        $newsImage = $this->NewsImages->get($id, [
+        $newsimage = $this->NewsImages->get($id, [
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $newsImage = $this->NewsImages->patchEntity($newsImage, $this->request->getData());
-            if ($this->NewsImages->save($newsImage)) {
-                $this->Flash->success(__('The news image has been saved.'));
+            $newsimage = $this->NewsImages->patchEntity($newsimage, $this->request->getData());
+            if ($this->NewsImages->save($newsimage)) {
+                $this->Flash->success(__('The newsimage has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The news image could not be saved. Please, try again.'));
+            $this->Flash->error(__('The newsimage could not be saved. Please, try again.'));
         }
         $news = $this->NewsImages->News->find('list', ['limit' => 200]);
-        $this->set(compact('newsImage', 'news'));
+        $this->set(compact('newsimage', 'news'));
     }
 
     /**
      * Delete method
      *
-     * @param string|null $id News Image id.
+     * @param string|null $id Newsimage id.
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $newsImage = $this->NewsImages->get($id);
-        if ($this->NewsImages->delete($newsImage)) {
-            $this->Flash->success(__('The news image has been deleted.'));
+        $newsimage = $this->NewsImages->get($id);
+        if ($this->NewsImages->delete($newsimage)) {
+            $this->Flash->success(__('The newsimage has been deleted.'));
         } else {
-            $this->Flash->error(__('The news image could not be deleted. Please, try again.'));
+            $this->Flash->error(__('The newsimage could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);

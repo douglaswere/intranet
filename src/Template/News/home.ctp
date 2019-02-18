@@ -12,11 +12,14 @@ $this->extend('/Common/centerPage')
 <div class="container">
     <div class="col-md-12 blog-main">
         <div class="row py-2">
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <span class="pb-3 mb-4 h3-semi text-left">NEWS & ANNOUNCEMENTS</span>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-4">
+                 <span
+                     class="text-left"><?= $this->Html->link(__('Google Auth'), ['action' => 'googleAuth'],
+                         ['class' => 'draft']) ?></span>
                 <span
                     class="text-right"><?= $this->Html->link(__('Submit News Article'), ['action' => 'google'],
                         ['class' => 'draft']) ?></span>

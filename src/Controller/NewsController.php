@@ -70,7 +70,7 @@ class NewsController extends AppController
      * @throws \Exception
      */
 
-    public function google_()
+    public function googleAuth()
     {
         // $this->loadComponent('Google');
 
@@ -82,36 +82,48 @@ class NewsController extends AppController
         $client->setAccessType('offline');
         $client->setApprovalPrompt('force');
         if (file_exists($dir . "credentials.json")) {
-            $access_token = (file_get_contents($dir . "credentials.json"));
 
+            $access_token = (file_get_contents($dir . "credentials.json"));
             $client->setAccessToken($access_token);
             //Refresh the token if it's expired.
             if ($client->isAccessTokenExpired()) {
                 $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
                 file_put_contents($dir . "credentials.json", json_encode($client->getAccessToken()));
+                return $this->redirect(['controller' => 'news', 'action' => 'add']);
             }
-            //  $drive_service = new Google_Service_Drive($client);
-            //$files_list = $drive_service->files->listFiles(array())->getFiles();
-            /*
-                        echo '<pre>';
-                        var_dump($files_list);*/
-            // echo json_encode($files_list);
+            /* $drive_service = new Google_Service_Drive($client);
+            $files_list = $drive_service->files->listFiles(array())->getFiles();
+
+                       echo '<pre>';
+                        var_dump($files_list);
+             echo json_encode($files_list);
+            */
             return $this->redirect(['controller' => 'news', 'action' => 'add']);
 
         } else {
-              $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
-              header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
-           // return $this->redirect(['controller' => 'Oauth', 'action' => 'callback']);
 
+            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+            header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+            // return $this->redirect(['controller' => 'Oauth', 'action' => 'callback']);
+            exit;
         }
-
+        return $this->redirect(['controller' => 'news', 'action' => 'add']);
+        exit;
 
     }
 
     public function google()
     {
         $client = new Google_Client();
+
         $dir = ROOT . '\\';
+        $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
+        $client->setHttpClient($guzzleClient);
+        $client->setAuthConfig($dir . 'client_id.json');
+        $client->setApplicationName('Intranet');
+        $client->addScope(Google_Service_Drive::DRIVE);
+        $client->setAccessType('offline');
+        $client->setApprovalPrompt('force');
         if (file_exists($dir . "credentials.json")) {
             $access_token = (file_get_contents($dir . "credentials.json"));
             echo '<pre>';
@@ -119,14 +131,25 @@ class NewsController extends AppController
             $client->setAccessToken($access_token);
             //Refresh the token if it's expired.
             if ($client->isAccessTokenExpired()) {
+
+                $refreshTokenSaved = $client->getRefreshToken($access_token);
                 $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+
+                $accessTokenUpdated = $client->getAccessToken();
+
+                // append refresh token
+                $accessTokenUpdated['refresh_token'] = $refreshTokenSaved;
+
+                //Set the new acces token
+                $accessToken = $refreshTokenSaved;
+                $client->setAccessToken($accessToken);
+
                 file_put_contents($dir . "credentials.json", json_encode($client->getAccessToken()));
+            } else {
+                return $this->redirect(['controller' => 'news', 'action' => 'add']);
+                exit;
             }
-            $drive_service = new Google_Service_Drive($client);
-            $files_list = $drive_service->files->listFiles(array())->getFiles();
-            var_dump($files_list);
-            echo json_encode($files_list);
-            exit;
+
         } else {
             $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
             header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
@@ -154,7 +177,7 @@ class NewsController extends AppController
             $access_token = (file_get_contents($dir . "credentials.json"));
 
             $client->setAccessToken($access_token);
-            $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
+            $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
             $client->setHttpClient($guzzleClient);
             //Refresh the token if it's expired.
             if ($client->isAccessTokenExpired()) {
@@ -178,31 +201,6 @@ class NewsController extends AppController
 
             $fileId = $createdFile->id;
             $drive_service->getClient()->setUseBatch(true);
-            try {
-                $batch =  $drive_service->createBatch();
-
-
-                $domainPermission = new Google_Service_Drive_Permission(array(
-                    'type' => 'domain',
-                    'role' => 'reader',
-                    'domain' => 'global'
-                ));
-                $request =  $drive_service->permissions->create(
-                    $fileId, $domainPermission, array('fields' => 'id'));
-                $batch->add($request, 'domain');
-                $results = $batch->execute();
-
-                foreach ($results as $result) {
-                    if ($result instanceof Google_Service_Exception) {
-                        // Handle error
-                        printf($result);
-                    } else {
-                        printf("Permission ID: %s\n", $result->id);
-                    }
-                }
-            } finally {
-                $drive_service->getClient()->setUseBatch(false);
-            }
 
             $news = $this->News->patchEntity($news, $this->request->getData());
             $news->user_id = 1;
@@ -219,6 +217,7 @@ class NewsController extends AppController
                     $newsImage->height = $size[0];
                     $newsImage->width = $size[1];
                     $newsImage->feature = $news->feature;
+                    $newsImage->style = 'background-image: linear-gradient(to right, #FFFFFF 50% , #FFFFFF 50%);';
                     // $newsImage->url = $dir . $file['name'];
                     $newsImage->url = $google_id;
                     if ($this->NewsImages->save($newsImage)) {

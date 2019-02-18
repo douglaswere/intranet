@@ -88,6 +88,10 @@ class NewsImagesTable extends Table
             ->scalar('url')
             ->allowEmptyString('url');
 
+        $validator
+            ->scalar('style')
+            ->allowEmptyString('style');
+
         return $validator;
     }
 
