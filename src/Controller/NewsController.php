@@ -28,7 +28,8 @@ class NewsController extends AppController
     public function index()
     {
         $this->paginate = [
-            'contain' => ['Users', 'NewsImages']
+            'contain' => ['Users', 'NewsImages'],
+            'order' => ['id' => 'DESC']
         ];
         $news = $this->paginate($this->News);
         $this->set(compact('news'));
@@ -40,7 +41,8 @@ class NewsController extends AppController
         $this->paginate = [
             'contain' => ['Users', 'NewsImages'],
             'condition' => ['feature !=' => 1],
-            'limit' => 5
+            'limit' => 5,
+            'order' => ['id' => 'DESC']
 
         ];
         $news = $this->paginate($this->News);
@@ -115,7 +117,6 @@ class NewsController extends AppController
     public function google()
     {
         $client = new Google_Client();
-
         $dir = ROOT . '\\';
         $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
         $client->setHttpClient($guzzleClient);
@@ -131,11 +132,23 @@ class NewsController extends AppController
             $client->setAccessToken($access_token);
             //Refresh the token if it's expired.
             if ($client->isAccessTokenExpired()) {
-
-                $refreshTokenSaved = $client->getRefreshToken($access_token);
-                $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-
+                $refreshTokenSaved = $client->getRefreshToken();
+               // $refreshTokenSaved = $client->getRefreshToken($access_token);
+               // $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+                $client->fetchAccessTokenWithRefreshToken($refreshTokenSaved);
+                // pass access token to some variable
                 $accessTokenUpdated = $client->getAccessToken();
+
+                $accessTokenUpdated['refresh_token'] = $refreshTokenSaved;
+
+                //Set the new access token
+                $accessToken = $refreshTokenSaved;
+                $client->setAccessToken($accessToken);
+                file_put_contents($dir . "credentials.json", json_encode($accessTokenUpdated));
+                return $this->redirect(['controller' => 'news', 'action' => 'add']);
+                exit;
+
+               /* $accessTokenUpdated = $client->getAccessToken();
 
                 // append refresh token
                 $accessTokenUpdated['refresh_token'] = $refreshTokenSaved;
@@ -145,7 +158,7 @@ class NewsController extends AppController
                 $client->setAccessToken($accessToken);
 
                 file_put_contents($dir . "credentials.json", json_encode($client->getAccessToken()));
-            } else {
+ */           } else {
                 return $this->redirect(['controller' => 'news', 'action' => 'add']);
                 exit;
             }
@@ -200,7 +213,20 @@ class NewsController extends AppController
             $google_id = $createdFile->id;
 
             $fileId = $createdFile->id;
-            $drive_service->getClient()->setUseBatch(true);
+
+            $newPermission = new Google_Service_Drive_Permission();
+            $newPermission->setType('anyone');
+            $newPermission->setRole('reader');
+
+            try
+            {
+                $drive_service->permissions->create($fileId, $newPermission);
+            }
+            catch (Exception $e)
+            {
+                print "An error occurred: " . $e->getMessage();
+            }
+
 
             $news = $this->News->patchEntity($news, $this->request->getData());
             $news->user_id = 1;
