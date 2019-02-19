@@ -36,14 +36,11 @@ class BannerCell extends Cell
     public function display()
     {
         $this->loadModel('News');
-        $query = $this->News->find('all', [
-            'condition' => ['feature' => 1],
+        $feature = $this->News->find('all', [
             'contain' => ['NewsImages'],
             'limit' => 1,
             'order' => ['News.id' => 'DESC']
-        ]);
-        $feature = $query->all();
-
+        ])->where(['feature ' => '1']);
         $this->set(compact('feature'));
     }
 }

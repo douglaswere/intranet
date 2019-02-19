@@ -227,7 +227,6 @@ class NewsController extends AppController
                 print "An error occurred: " . $e->getMessage();
             }
 
-
             $news = $this->News->patchEntity($news, $this->request->getData());
             $news->user_id = 1;
             if ($this->News->save($news)) {
