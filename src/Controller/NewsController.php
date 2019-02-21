@@ -18,7 +18,12 @@ use Google_Service_Exception;
  */
 class NewsController extends AppController
 {
+    public function initialize()
+    {
+        parent::initialize();
+        $this->loadComponent("GoogleDrive"); // load specific component
 
+    }
 
     /**
      * Index method
@@ -36,6 +41,20 @@ class NewsController extends AppController
     }
 
     public function home()
+    {
+        $this->viewBuilder()->setLayout('home');
+        $this->paginate = [
+            'contain' => ['Users', 'NewsImages'],
+            'condition' => ['feature !=' => 1],
+            'limit' => 5,
+            'order' => ['id' => 'DESC']
+
+        ];
+        $news = $this->paginate($this->News);
+        $this->set(compact('news'));
+    }
+
+    public function page()
     {
         $this->viewBuilder()->setLayout('home');
         $this->paginate = [
@@ -133,14 +152,12 @@ class NewsController extends AppController
             //Refresh the token if it's expired.
             if ($client->isAccessTokenExpired()) {
                 $refreshTokenSaved = $client->getRefreshToken();
-               // $refreshTokenSaved = $client->getRefreshToken($access_token);
-               // $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+                // $refreshTokenSaved = $client->getRefreshToken($access_token);
+                // $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
                 $client->fetchAccessTokenWithRefreshToken($refreshTokenSaved);
                 // pass access token to some variable
                 $accessTokenUpdated = $client->getAccessToken();
-
                 $accessTokenUpdated['refresh_token'] = $refreshTokenSaved;
-
                 //Set the new access token
                 $accessToken = $refreshTokenSaved;
                 $client->setAccessToken($accessToken);
@@ -148,18 +165,59 @@ class NewsController extends AppController
                 return $this->redirect(['controller' => 'news', 'action' => 'add']);
                 exit;
 
-               /* $accessTokenUpdated = $client->getAccessToken();
+            } else {
+                return $this->redirect(['controller' => 'news', 'action' => 'add']);
+                exit;
+            }
 
-                // append refresh token
+        } else {
+            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+            header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+            exit;
+        }
+
+    }
+    public function setup()
+    {
+     $client = $this->GoogleDrive->setup();
+     var_dump($client);
+       exit;
+    }
+
+    public function googleNew()
+    {
+        $client = new Google_Client();
+        $dir = ROOT . '\\';
+        $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
+        $client->setHttpClient($guzzleClient);
+        $client->setAuthConfig($dir . 'client_id.json');
+        $client->setApplicationName('Intranet');
+        $client->addScope(Google_Service_Drive::DRIVE);
+        $client->setAccessType('offline');
+        $client->setApprovalPrompt('force');
+        if (file_exists($dir . "credentials.json")) {
+            $access_token = (file_get_contents($dir . "credentials.json"));
+            echo '<pre>';
+            var_dump($access_token);
+            $client->setAccessToken($access_token);
+            //Refresh the token if it's expired.
+            if ($client->isAccessTokenExpired()) {
+                $refreshTokenSaved = $client->getRefreshToken();
+                // $refreshTokenSaved = $client->getRefreshToken($access_token);
+                // $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+                $client->fetchAccessTokenWithRefreshToken($refreshTokenSaved);
+                // pass access token to some variable
+                $accessTokenUpdated = $client->getAccessToken();
                 $accessTokenUpdated['refresh_token'] = $refreshTokenSaved;
-
-                //Set the new acces token
+                //Set the new access token
                 $accessToken = $refreshTokenSaved;
                 $client->setAccessToken($accessToken);
+                file_put_contents($dir . "credentials.json", json_encode($accessTokenUpdated));
+                return $this->redirect(['controller' => 'news', 'action' => 'addNew']);
+                exit;
 
-                file_put_contents($dir . "credentials.json", json_encode($client->getAccessToken()));
- */           } else {
-                return $this->redirect(['controller' => 'news', 'action' => 'add']);
+            } else {
+                return $this->redirect(['controller' => 'news', 'action' => 'addNew']);
                 exit;
             }
 
@@ -218,12 +276,76 @@ class NewsController extends AppController
             $newPermission->setType('anyone');
             $newPermission->setRole('reader');
 
-            try
-            {
+            try {
                 $drive_service->permissions->create($fileId, $newPermission);
+            } catch (Exception $e) {
+                print "An error occurred: " . $e->getMessage();
             }
-            catch (Exception $e)
-            {
+
+            $news = $this->News->patchEntity($news, $this->request->getData());
+            $news->user_id = 1;
+            if ($this->News->save($news)) {
+                $this->loadModel('NewsImages');
+                $image = $this->NewsImages->newEntity();
+                $dir = WWW_ROOT . 'files\\';
+                if (move_uploaded_file($file['tmp_name'], $dir . $file['name'])) {
+
+                    $this->request->data['filename'] = $file['name'];
+                    $size = getimagesize($file['tmp_name'], $info);
+                    $newsImage = $this->NewsImages->patchEntity($image, $file);
+                    $newsImage->news_id = $news->id;
+                    $newsImage->height = $size[0];
+                    $newsImage->width = $size[1];
+                    $newsImage->feature = $news->feature;
+                    $newsImage->style = 'background-image: linear-gradient(to right, #FFFFFF 50% , #FFFFFF 50%);';
+                    // $newsImage->url = $dir . $file['name'];
+                    $newsImage->url = $google_id;
+                    if ($this->NewsImages->save($newsImage)) {
+                        $this->Flash->success(__('The image file has been saved.'));
+                    }
+                }
+                $this->Flash->success(__('The news has been saved.'));
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The news could not be saved. Please, try again.'));
+
+        }
+        $users = $this->News->Users->find('list', ['limit' => 200]);
+        $files = $this->News->Files->find('list', ['limit' => 200]);
+        $tags = $this->News->Tags->find('list', ['limit' => 200]);
+        $this->set(compact('news', 'users', 'files', 'tags'));
+    }
+
+    public function addNew()
+    {
+        $news = $this->News->newEntity();
+        if ($this->request->is(['post'])) {
+            $info = $this->request->getData();
+            $file = $info['image'];
+            $client = $this->GoogleDrive->client();
+            $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
+            $client->setHttpClient($guzzleClient);
+            $drive_service = new Google_Service_Drive($client);
+            $file_drive = new \Google_Service_Drive_DriveFile();
+            $file_drive->setName($file['name']);
+            $file_drive->setDescription('A test document');
+            $file_drive->setMimeType('image/jpeg');
+            $data = file_get_contents($file['tmp_name']);
+            // $folderId = '0AIiZFlCqNHniUk9PVA';
+            $createdFile = $drive_service->files->create($file_drive, array(
+                'data' => $data,
+                'mimeType' => 'image/jpeg',
+                // 'parents' => array($folderId)
+            ));
+            $google_id = $createdFile->id;
+            $fileId = $createdFile->id;
+            $newPermission = new Google_Service_Drive_Permission();
+            $newPermission->setType('anyone');
+            $newPermission->setRole('reader');
+
+            try {
+                $drive_service->permissions->create($fileId, $newPermission);
+            } catch (Exception $e) {
                 print "An error occurred: " . $e->getMessage();
             }
 
