@@ -3,9 +3,10 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\News[]|\Cake\Collection\CollectionInterface $news
  */
+$this->extend('/Common/centerPage');
+$this->assign('title','News');
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
+<?php $this->start('links'); ?>
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Html->link(__('New News'), ['action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List Users'), ['controller' => 'Users', 'action' => 'index']) ?></li>
@@ -14,11 +15,12 @@
         <li><?= $this->Html->link(__('New File'), ['controller' => 'Files', 'action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List Tags'), ['controller' => 'Tags', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New Tag'), ['controller' => 'Tags', 'action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="news index large-9 medium-8 columns content">
-    <h3><?= __('News') ?></h3>
-    <table cellpadding="0" cellspacing="0" class="table-bordered table table-responsive">
+<?php $this->end(); ?>
+
+
+    <?php $this->start('table'); ?>
+
+    <table cellpadding="0" cellspacing="0" id="example" class=" table-responsive">
         <thead>
         <tr>
             <th>#</th>
@@ -42,7 +44,7 @@
                     $image = "https://drive.google.com/file/d/1_UzqCvORabWYalzR_uITMBRF-FEOmJfG/view";
                    // echo $news->news_images[0]["url"];
                     ?>
-                    <img src="https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>" height="50px" alt="<?php echo $news->news_images['0']['url']; ?>"></td>
+                    <img width="100px" src="https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>" height="50px" alt="<?php echo $news->news_images['0']['url']; ?>"></td>
                 <td><?= $this->Number->format($news->id) ?></td>
                 <td><?= h($news->title) ?></td>
                 <td><?= $news->has('user') ? $this->Html->link($news->user->title, ['controller' => 'Users', 'action' => 'view', $news->user->id]) : '' ?></td>
@@ -70,4 +72,6 @@
         </ul>
         <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
     </div>
-</div>
+
+<?php $this->end(); ?>
+

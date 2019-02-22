@@ -231,7 +231,6 @@ class NewsController extends AppController
 
     public function add()
     {
-
         $news = $this->News->newEntity();
         $dir = ROOT . '\\';
 
