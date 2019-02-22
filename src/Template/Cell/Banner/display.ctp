@@ -7,7 +7,7 @@
     //background-image: linear-gradient(to right, #46696B 50% , #BFDEA3 50%);
     ?>
     <div class="container-fluid" style="<?php echo $style; ?>">
-        <div class="container py-lg-5 py-5 text-white "
+        <div class="container py-lg-5 py-5 text-white border-botton-line"
              style=" background-image: url('https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>');background-repeat: no-repeat; background-size: contain;">
             <div class="row">
                 <div class="col-md-8 ">
@@ -38,7 +38,15 @@
         </div>
     </div>
     <div class=" container text-center">
-    <h2 class="main-h2 py-3"><?= strip_tags($news->title) ?></h2>
+        <h2 class="main-h2 py-3"><?= strip_tags($news->title) ?></h2>
+
+        <p class="blog-post-meta text-center">
+            <?= h($news->date_submitted) ?> by
+            <a href="#"><?= $news->has('user') ? $this->Html->link($news->user->first_name,
+                    ['controller' => 'Users', 'action' => 'view', $news->user->first_name]) : '' ?></a>
+        </p>
+
+
         <p class="container main-p py-3">
             <?php
             $string = strip_tags($news->text);

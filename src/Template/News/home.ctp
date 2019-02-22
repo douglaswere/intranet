@@ -45,7 +45,6 @@ $this->extend('/Common/centerPage')
                     <h2 class="blog-post-title"><?= h($news->title) ?></h2>
                     <p class="main-p">
                         <?php
-
                         $string = strip_tags($news->text);
                         if (strlen($string) > 200) {
 

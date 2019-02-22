@@ -547,3 +547,8 @@ input[type=checkbox], input[type=radio] {
 
     color: white;
 }
+.border-botton-line{
+
+    border-bottom: 2px solid #640032 ;
+
+}

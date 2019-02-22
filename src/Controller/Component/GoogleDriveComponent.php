@@ -34,6 +34,11 @@ class GoogleDriveComponent extends Component
         $this->dir = ROOT . '\\';
         // create the new google client
         $this->client = new Google_Client();
+        $this->client->setAuthConfig($this->dir . 'client_id.json');
+        $this->client->setApplicationName('Intranet');
+        $this->client->addScope(Google_Service_Drive::DRIVE);
+        $this->client->setAccessType('offline');
+        $this->client->setApprovalPrompt('force');
     }
     public function setup()
     {
@@ -86,6 +91,8 @@ class GoogleDriveComponent extends Component
             $access_token = (file_get_contents($this->dir . "credentials.json"));
             $this->client->setAccessToken($access_token);
             //Refresh the token if it's expired.
+            $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
+            $this->client->setHttpClient($guzzleClient);
             if ($this->client->isAccessTokenExpired()) {
                 $refreshTokenSaved = $this->client->getRefreshToken();
                 // $refreshTokenSaved = $client->getRefreshToken($access_token);
