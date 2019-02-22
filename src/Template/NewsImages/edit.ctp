@@ -3,9 +3,10 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Newsimage $newsimage
  */
+$this->extend('/Common/addPage');
+$this->assign('title','Edit');
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
+<?php $this->start('links'); ?>
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Form->postLink(
                 __('Delete'),
@@ -16,9 +17,8 @@
         <li><?= $this->Html->link(__('List Newsimages'), ['action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('List News'), ['controller' => 'News', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New News'), ['controller' => 'News', 'action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="newsimages form large-9 medium-8 columns content">
+<?php $this->end(); ?>
+<?php $this->start('form') ?>
     <?= $this->Form->create($newsimage) ?>
     <fieldset>
         <legend><?= __('Edit Newsimage') ?></legend>
@@ -34,6 +34,9 @@
             echo $this->Form->control('style');
         ?>
     </fieldset>
-    <?= $this->Form->button(__('Submit')) ?>
+    <?= $this->Form->button(__('Submit'),['type' => 'Submit',
+        'class'=>'submit'
+
+    ]) ?>
     <?= $this->Form->end() ?>
-</div>
+<?php $this->end(); ?>

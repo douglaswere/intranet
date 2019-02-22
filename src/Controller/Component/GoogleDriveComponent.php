@@ -30,6 +30,9 @@ class GoogleDriveComponent extends Component
         // set the credential array. All of these information can be found in the json file that was provied to you when you create
         // a service account
         $this->dir = ROOT . '\\';
+        /**for linux**/
+        // $this->dir = ROOT . '/';
+
         // create the new google client
         $this->client = new Google_Client();
         $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
@@ -40,6 +43,7 @@ class GoogleDriveComponent extends Component
         $this->client->setAccessType('offline');
         $this->client->setApprovalPrompt('force');
     }
+
     public function setup()
     {
         // create the service
@@ -72,12 +76,13 @@ class GoogleDriveComponent extends Component
             }
 
         } else {
-            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . 'cake/intranet/oauth/callback';
-           // $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+            // $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . 'cake/intranet/oauth/callback';
+            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
             header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
             exit;
         }
     }
+
     public function client()
     {
         if (file_exists($this->dir . "credentials.json")) {
@@ -105,9 +110,8 @@ class GoogleDriveComponent extends Component
                 exit;
             }
         } else {
-            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . 'cake/intranet/oauth/callback';
 
-           // $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
             header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
             exit;
         }

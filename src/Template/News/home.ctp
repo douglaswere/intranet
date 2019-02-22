@@ -18,10 +18,10 @@ $this->extend('/Common/centerPage')
 
             <div class="col-md-4">
                  <span
-                     class="text-left"><?= $this->Html->link(__('Google Auth'), ['action' => 'googleAuth'],
+                     class="text-left"><?= $this->Html->link(__('Google Auth'), ['action' => 'setup'],
                          ['class' => 'draft']) ?></span>
                 <span
-                    class="text-right"><?= $this->Html->link(__('Submit News Article'), ['action' => 'google'],
+                    class="text-right"><?= $this->Html->link(__('Submit News Article'), ['action' => 'add'],
                         ['class' => 'draft']) ?></span>
             </div>
         </div>
@@ -45,6 +45,7 @@ $this->extend('/Common/centerPage')
                     <h2 class="blog-post-title"><?= h($news->title) ?></h2>
                     <p class="main-p">
                         <?php
+
                         $string = strip_tags($news->text);
                         if (strlen($string) > 200) {
 

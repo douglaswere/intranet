@@ -30,32 +30,35 @@ class  OauthController extends AppController
 
     public function callback()
     {
-        $dir = ROOT . '\\';
-        require_once ROOT . '/vendor' . DS . 'autoload.php';
+        $dir = ROOT . '/';
+        require_once ROOT .'/vendor' . '/autoload.php';
 
-        /*  echo ROOT.'/vendor'.DS.'autoload.php';
-          exit;*/
+          echo ROOT.'vendor'.DS.'autoload.php<br>';
+
         $client = new Google_Client();
         $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
         $client->setHttpClient($guzzleClient);
         $client->setAuthConfigFile($this->dir . 'client_id.json');
-        $client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . 'cake/intranet/oauth/callback');
+        $client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . '/cake/intranet/oauth/callback');
         $client->addScope(Google_Service_Drive::DRIVE);
         // $client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . 'cake/intranet/oauth2callback.php');
         $client->setAccessType('offline');
         $client->setApprovalPrompt('force');
 
         $params = $this->request->getQueryParams('code');
-        /* echo '<pre>';
+         echo $this->dir . 'client_id.json';
+        echo '<pre>';
          var_dump($client);
          var_dump($params);
-         exit;*/
+        // exit;
 
         if (!isset($params['code'])) {
+            echo 'code';
             $auth_url = $client->createAuthUrl();
             header('Location: ' . filter_var($auth_url, FILTER_SANITIZE_URL));
         } else {
             $params = $this->request->getQueryParams('code');
+            echo 'code';
             echo $params['code'];
             $client->authenticate($params['code']);
             //$_SESSION['access_token'] = $client->getAccessToken();
@@ -63,7 +66,7 @@ class  OauthController extends AppController
             //$access_token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
             file_put_contents($dir . 'credentials.json', json_encode($access_token));
 
-            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . 'cake/intranet/news/add';
+            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/cake/intranet/news/addNew';
             header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
             exit;
             //$this->redirect(['controller' => 'news', 'action' => 'add']);

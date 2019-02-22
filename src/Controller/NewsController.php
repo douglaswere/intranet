@@ -133,7 +133,7 @@ class NewsController extends AppController
 
     }
 
-    public function google()
+    public function google_()
     {
         $client = new Google_Client();
         $dir = ROOT . '\\';
@@ -184,7 +184,7 @@ class NewsController extends AppController
        exit;
     }
 
-    public function googleNew()
+    public function google()
     {
         $client = new Google_Client();
         $dir = ROOT . '\\';
@@ -229,7 +229,7 @@ class NewsController extends AppController
 
     }
 
-    public function add()
+    public function add_()
     {
         $news = $this->News->newEntity();
         $dir = ROOT . '\\';
@@ -315,7 +315,7 @@ class NewsController extends AppController
         $this->set(compact('news', 'users', 'files', 'tags'));
     }
 
-    public function addNew()
+    public function add()
     {
         $news = $this->News->newEntity();
         if ($this->request->is(['post'])) {
@@ -341,7 +341,6 @@ class NewsController extends AppController
             $newPermission = new Google_Service_Drive_Permission();
             $newPermission->setType('anyone');
             $newPermission->setRole('reader');
-
             try {
                 $drive_service->permissions->create($fileId, $newPermission);
             } catch (Exception $e) {

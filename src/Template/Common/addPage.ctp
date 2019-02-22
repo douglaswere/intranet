@@ -11,6 +11,26 @@
     <?= $this->fetch('center') ?>
 
 <?php endif ?>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h1> <?= $this->fetch('title') ?></h1>
+        </div>
+        <div class="col-md-6">
+            <?php if ($this->fetch('links')): ?>
+                <div class="dropdown links">
+                    <a class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">
+                        Actions
+                    </a>
+                    <div class="dropdown-menu linked" aria-labelledby="dropdownMenuButton">
+                        <?= $this->fetch('links') ?>
+                    </div>
+                </div>
+            <?php endif ?>
+        </div>
+    </div>
+</div>
 
 <?php if ($this->fetch('form')): ?>
 <div class="row">

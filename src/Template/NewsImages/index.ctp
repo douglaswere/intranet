@@ -3,18 +3,17 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Newsimage[]|\Cake\Collection\CollectionInterface $newsimages
  */
+$this->extend('/Common/centerPage');
+$this->assign('title','News Images');
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
+<?php $this->start('links') ?>
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Html->link(__('New Newsimage'), ['action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List News'), ['controller' => 'News', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New News'), ['controller' => 'News', 'action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="newsimages index large-9 medium-8 columns content">
-    <h3><?= __('Newsimages') ?></h3>
-    <table cellpadding="0" cellspacing="0">
+<?php $this->end() ?>
+<?php $this->start('table'); ?>
+    <table cellpadding="0" cellspacing="0" id="example" class=" table-responsive" >
         <thead>
             <tr>
                 <th scope="col"><?= $this->Paginator->sort('id') ?></th>
@@ -58,4 +57,4 @@
         </ul>
         <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
     </div>
-</div>
+<?php $this->end(); ?>
