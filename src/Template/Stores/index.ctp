@@ -3,10 +3,10 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Store[]|\Cake\Collection\CollectionInterface $stores
  */
+$this->extend('/Common/centerPage');
+$this->assign('title','Stores');
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
+<?php $this->start('links'); ?>
         <li><?= $this->Html->link(__('New Store'), ['action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List Navmenus'), ['controller' => 'Navmenus', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New Navmenu'), ['controller' => 'Navmenus', 'action' => 'add']) ?></li>
@@ -22,11 +22,9 @@
         <li><?= $this->Html->link(__('New Store Var'), ['controller' => 'StoreVars', 'action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('List Files'), ['controller' => 'Files', 'action' => 'index']) ?></li>
         <li><?= $this->Html->link(__('New File'), ['controller' => 'Files', 'action' => 'add']) ?></li>
-    </ul>
-</nav>
-<div class="stores index large-9 medium-8 columns content">
-    <h3><?= __('Stores') ?></h3>
-    <table cellpadding="0" cellspacing="0">
+<?php $this->end(); ?>
+<?php $this->start('table'); ?>
+    <table cellpadding="0" cellspacing="0"  id="example">
         <thead>
             <tr>
                 <th scope="col"><?= $this->Paginator->sort('id') ?></th>
@@ -62,4 +60,5 @@
         </ul>
         <p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
     </div>
-</div>
+
+<?php $this->end(); ?>

@@ -6,16 +6,13 @@
 $this->extend('/Common/centerPage')
 ?>
 <?php $this->start('center'); ?>
-
 <?php echo $this->cell('Banner'); ?>
-
 <div class="container">
     <div class="col-md-12 blog-main">
         <div class="row py-2">
             <div class="col-md-8">
                 <span class="pb-3 mb-4 h3-semi text-left">NEWS & ANNOUNCEMENTS</span>
             </div>
-
             <div class="col-md-4">
                  <span
                      class="text-left"><?= $this->Html->link(__('Google Auth'), ['action' => 'setup'],

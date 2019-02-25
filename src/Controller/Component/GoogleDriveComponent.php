@@ -11,6 +11,8 @@ namespace App\Controller\Component;
 use Cake\Controller\Component;
 use Google_Client;
 use Google_Service_Drive;
+use Google_Service_Drive_DriveFile;
+use Google_Service_Drive_Permission;
 
 class GoogleDriveComponent extends Component
 {
@@ -32,11 +34,10 @@ class GoogleDriveComponent extends Component
         $this->dir = ROOT . '\\';
         /**for linux**/
         // $this->dir = ROOT . '/';
-
         // create the new google client
         $this->client = new Google_Client();
-        $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
-        $this->client->setHttpClient($guzzleClient);
+        /* $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
+         $this->client->setHttpClient($guzzleClient);*/
         $this->client->setAuthConfig($this->dir . 'client_id.json');
         $this->client->setApplicationName('Intranet');
         $this->client->addScope(Google_Service_Drive::DRIVE);
@@ -48,11 +49,8 @@ class GoogleDriveComponent extends Component
     {
         // create the service
         // $this->service = new Google_Service_Drive($this->client);
-
-        if (file_exists($this->dir . "credentials.json")) {
-            $access_token = (file_get_contents($this->dir . "credentials.json"));
-            echo '<pre>';
-            var_dump($access_token);
+        if (file_exists($this->dir . 'credentials.json')) {
+            $access_token = file_get_contents($this->dir . 'credentials.json');
             $this->client->setAccessToken($access_token);
             //Refresh the token if it's expired.
             if ($this->client->isAccessTokenExpired()) {
@@ -66,31 +64,27 @@ class GoogleDriveComponent extends Component
                 //Set the new access token
                 $accessToken = $refreshTokenSaved;
                 $this->client->setAccessToken($accessToken);
-                file_put_contents($this->dir . "credentials.json", json_encode($accessTokenUpdated));
+                file_put_contents($this->dir . 'credentials.json', json_encode($accessTokenUpdated));
                 return $this->client;
-                exit;
 
-            } else {
-                return $this->client;
-                exit;
             }
-
-        } else {
-            // $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . 'cake/intranet/oauth/callback';
-            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
-            header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
-            exit;
+            return $this->client;
         }
+        // $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . 'cake/intranet/oauth/callback';
+        $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+        header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+        exit;
+
     }
 
     public function client()
     {
-        if (file_exists($this->dir . "credentials.json")) {
-            $access_token = (file_get_contents($this->dir . "credentials.json"));
+        if (file_exists($this->dir . 'credentials.json')) {
+            $access_token = file_get_contents($this->dir . 'credentials.json');
             $this->client->setAccessToken($access_token);
             //Refresh the token if it's expired.
-            $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
-            $this->client->setHttpClient($guzzleClient);
+            /*$guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
+            $this->client->setHttpClient($guzzleClient);*/
             if ($this->client->isAccessTokenExpired()) {
                 $refreshTokenSaved = $this->client->getRefreshToken();
                 // $refreshTokenSaved = $client->getRefreshToken($access_token);
@@ -102,243 +96,54 @@ class GoogleDriveComponent extends Component
                 //Set the new access token
                 $accessToken = $refreshTokenSaved;
                 $this->client->setAccessToken($accessToken);
-                file_put_contents($this->dir . "credentials.json", json_encode($accessTokenUpdated));
+                file_put_contents($this->dir . 'credentials.json', json_encode($accessTokenUpdated));
                 return $this->client;
-                exit;
-            } else {
-                return $this->client;
-                exit;
             }
-        } else {
+            return $this->client;
 
-            $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
-            header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
-            exit;
         }
+        $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+        header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+        exit;
+
     }
 
-
+    public function uploadImage($file, $client)
+    {
+        /* $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
+         $client->setHttpClient($guzzleClient);*/
+        $drive_service = new Google_Service_Drive($client);
+        $file_drive = new \Google_Service_Drive_DriveFile();
+        $file_drive->setName($file['name']);
+        $file_drive->setDescription('Intranet image file');
+        $file_drive->setMimeType('image/jpeg');
+        $data = file_get_contents($file['tmp_name']);
+        // $folderId = '0AIiZFlCqNHniUk9PVA';
+        $createdFile = $drive_service->files->create($file_drive, array(
+            'data' => $data,
+            'mimeType' => 'image/jpeg',
+            // 'parents' => array($folderId)
+        ));
+        return $createdFile->id;
+    }
     // -----------------------------------------------------------------------------------
     // ShareWithUser
     // -----------------------------------------------------------------------------------
-    public function addShared($fileId, $userEmail, $role)
+    public function setPermission($fileId, $client, $type, $role)
     {
-        // role can be reader, writer, etc
-        $userPermission = new Google_Service_Drive_Permission(array(
-            'type' => 'user',
-            'role' => $role,
-            'emailAddress' => $userEmail
-        ));
-
-        $request = $this->service->permissions->create(
-            $fileId, $userPermission, array('fields' => 'id')
-        );
+        $drive_service = new Google_Service_Drive($client);
+        $newPermission = new Google_Service_Drive_Permission();
+        $newPermission->setType($type);
+        $newPermission->setRole($role);
+        $drive_service->permissions->create($fileId, $newPermission);
+        return true;
     }
 
-
-    // -----------------------------------------------------------------------------------
-    // getInfo
-    // -----------------------------------------------------------------------------------
-    public function getInfo($fileId)
+    public function listFiles($client)
     {
-        $retval = array(
-            'success' => 0,
-            'errorMessage' => null,
-            'data' => array()
-        );
-        $response = $this->service->files->get($fileId, array(
-            'fields' => 'id, name, modifiedTime',
-            'supportsTeamDrives' => true,
-        ));
-        if (empty($response)) {
-            $retval['success'] = 0;
-            return $retval;
-        }
-
-        $retval['success'] = 1;
-        $retval['data'] = $response;
-        return $retval;
+        $drive_service = new Google_Service_Drive($client);
+        return $drive_service->files->listFiles(array())->getFiles();
     }
-
-
-    // -----------------------------------------------------------------------------------
-    // List Folders
-    // -----------------------------------------------------------------------------------
-    // this public function will search inside the parent dir only and wont recurse inside the subdir
-    // the $parent is the id not the name
-
-    public function listFolders($parent)
-    {
-        $retval = array(
-            'success' => 0,
-            'errorMessage' => null,
-            'data' => array()
-        );
-        if (empty($parent)) {
-            $retval['success'] = 0;
-            $retval['errorMessage'] = "parent is not specified";
-            return $retval;
-        }
-        $pageToken = null;
-        do {
-            $response = $this->service->files->listFiles(array(
-                'q' => "mimeType='application/vnd.google-apps.folder' and trashed=false and '" . $parent . "' in parents",
-                'spaces' => 'drive',
-                'pageToken' => $pageToken,
-                'fields' => 'nextPageToken, files(id, name)',
-                'supportsTeamDrives' => true,
-                'includeTeamDriveItems' => true
-            ));
-            foreach ($response->files as $file) {
-                $retval['data'][$file->id] = $file->name;
-            }
-
-            $pageToken = $response->nextPageToken;
-
-        } while ($pageToken != null);
-        $retval['success'] = 0;
-        return $retval;
-    }
-    // -----------------------------------------------------------------------------------
-    // creating a folder inside the $parent. The $name is the title of the folder
-    // -----------------------------------------------------------------------------------
-    public function createFolder($name, $parent)
-    {
-
-        if (empty($parent)) {
-            return;
-        }
-        $fileMetadata = new Google_Service_Drive_DriveFile(array(
-            'name' => "$name",
-            'parents' => array($parent),
-            'mimeType' => 'application/vnd.google-apps.folder'
-        ));
-        $file = $this->service->files->create($fileMetadata, array(
-            'fields' => 'id',
-            'supportsTeamDrives' => true
-        ));
-        return $file->id;
-    }
-    // -----------------------------------------------------------------------------------
-    // check if a folder exist and return the Id of that folder
-    // -----------------------------------------------------------------------------------
-    public function isExistFolder($name, $parent)
-    {
-        $retval = array(
-            'success' => 0,
-            'errorMessage' => null,
-            'data' => array()
-        );
-        if (empty($parent)) {
-            $retval['success'] = 0;
-            $retval['errorMessage'] = 'parent is not specified';
-            return $retval;
-        }
-        $pageToken = null;
-        do {
-            $response = $this->service->files->listFiles(array(
-                'q' => "mimeType='application/vnd.google-apps.folder' and trashed=false and '" . $parent . "' in parents",
-                'spaces' => 'drive',
-                'pageToken' => $pageToken,
-                'fields' => 'nextPageToken, files(id, name)',
-                'supportsTeamDrives' => true,
-                'includeTeamDriveItems' => true
-            ));
-            foreach ($response->files as $file) {
-                if ($file->name === "$name") {
-                    $retval['success'] = 1;
-                    $retval['data']['id'] = $file->id;
-                    return $retval;
-                }
-            }
-            $pageToken = $response->nextPageToken;
-        } while ($pageToken != null);
-        // nothing was found, then return false
-        $retval['success'] = 0;
-        $retval['errorMessage'] = 'no entry was found';
-        return $retval;
-    }
-
-    // -----------------------------------------------------------------------------------
-    // public function that will return activities for a given $parent
-    // -----------------------------------------------------------------------------------
-
-    public function showActivities($clientId, $projectId)
-    {
-
-        $retval = array(
-            'success' => 0,
-            'errorMessage' => null,
-            'data' => array()
-        );
-
-
-        if (!empty($clientId)) {
-            $parent = $clientId;
-        }
-
-        if (!empty($projectId)) {
-            $parent = $projectId;
-        }
-
-        $savedPageToken = '4513641';
-
-        $response = $this->service->changes->getStartPageToken(array("supportsTeamDrives" => true));
-        printf("Start token: %s\n", $response->startPageToken);
-        return;
-
-        # Begin with our last saved start token for this user or the
-        # current token from getStartPageToken()
-        $changed = array();
-        $removed = array();
-
-        $pageToken = $savedPageToken;
-        while ($pageToken != null) {
-            $response = $this->service->changes->listChanges($pageToken, array(
-                'spaces' => 'drive',
-                'supportsTeamDrives' => true,
-                'includeTeamDriveItems' => true
-            ));
-
-            // print all of the files that got chagned
-            foreach ($response->changes as $change) {
-                // Process change
-                if (!$change->removed) {
-                    //echo "Time:[$change->time], Kind:[$change->kind], Type:[$change->type], Name:[".$change->file['name']."], Id:[$change->fileId]</br>";
-                    $changed[$change->fileId] = "Time:[$change->time], Kind:[$change->kind], Type:[$change->type], Name:[" . $change->file['name'] . "]";
-                }
-            }
-            // print all of the files that got removed
-            foreach ($response->changes as $change) {
-                // Process change
-                if ($change->removed) {
-                    //echo "Time:[$change->time], Kind:[$change->kind], Type:[$change->type], Name:[".$change->file['name']."], Id:[$change->fileId]</br>";
-                    $removed[$change->fileId] = "Time:[$change->time], Kind:[$change->kind], Type:[$change->type]";
-                }
-            }
-
-            if ($response->newStartPageToken != null) {
-                // Last page, save this token for the next polling interval
-                $savedStartPageToken = $response->newStartPageToken;
-            }
-            $pageToken = $response->nextPageToken;
-        }
-
-        echo "------------------------------------------ </br>";
-        echo "All Removed Files </br>";
-        echo "------------------------------------------ </br>";
-        pr($removed);
-
-        echo "</br>------------------------------------------ </br>";
-        echo "All Changed Files </br>";
-        echo "------------------------------------------ </br>";
-        pr($changed);
-    }
-
-
-    // -----------------------------------------------------------------------------------
-    // funcion used to move a file to a new parent
-    // -----------------------------------------------------------------------------------
 
     public function move($fileId, $parent)
     {
@@ -355,14 +160,12 @@ class GoogleDriveComponent extends Component
             'supportsTeamDrives' => true,
         ));
     }
-
     // -----------------------------------------------------------------------------------
     // delete a folder or a file
     // -----------------------------------------------------------------------------------
-    public function delete($fileId, $parent)
+    public function delete($fileId, $client)
     {
-        $this->service->files->delete($fileId, array('supportsTeamDrives' => true));
+        $drive_service = new Google_Service_Drive($client);
+        $drive_service->files->delete($fileId, array('supportsTeamDrives' => true));
     }
-
-
 }
