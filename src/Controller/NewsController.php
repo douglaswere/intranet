@@ -37,7 +37,7 @@ class NewsController extends AppController
     public function index()
     {
         $this->paginate = [
-            'contain' => ['Users', 'NewsImages'],
+            'contain' => ['Users', 'Files'],
             'order' => ['id' => 'DESC']
         ];
         $news = $this->paginate($this->News);
@@ -159,50 +159,6 @@ class NewsController extends AppController
         $this->set(compact('news', 'users', 'files', 'tags'));
     }
 
-    public function add_images()
-    {
-        $news = $this->News->newEntity();
-        if ($this->request->is(['post'])) {
-            $info = $this->request->getData();
-            $file = $info['image'];
-            /**uploading the image to google Drive */
-            $client = $this->GoogleDrive->client();
-            $file_id = $this->GoogleDrive->uploadImage($file, $client);
-            //google drive service set permissions and file roles
-            $this->GoogleDrive->setPermission($file_id, $client, 'anyone', 'reader');
-            /**end of uploading functionality***/
-            $news = $this->News->patchEntity($news, $this->request->getData());
-            $news->user_id = 1;
-            if ($this->News->save($news)) {
-                $this->loadModel('NewsImages');
-                $image = $this->NewsImages->newEntity();
-                $dir = WWW_ROOT . 'files\\';
-                if (move_uploaded_file($file['tmp_name'], $dir . $file['name'])) {
-                    $this->request->data['filename'] = $file['name'];
-                    $size = getimagesize($file['tmp_name'], $info);
-                    $newsImage = $this->NewsImages->patchEntity($image, $file);
-                    $newsImage->news_id = $news->id;
-                    $newsImage->height = $size[0];
-                    $newsImage->width = $size[1];
-                    $newsImage->feature = $news->feature;
-                    $newsImage->style = 'background-image: linear-gradient(to right, #FFFFFF 50% , #FFFFFF 50%);';
-                    // $newsImage->url = $dir . $file['name'];
-                    $newsImage->url = $file_id;
-                    if ($this->NewsImages->save($newsImage)) {
-                        $this->Flash->success(__('The image file has been saved.'));
-                    }
-                }
-                $this->Flash->success(__('The news has been saved.'));
-                return $this->redirect(['controller' => 'news', 'action' => 'home']);
-                //return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The news could not be saved. Please, try again.'));
-        }
-        $users = $this->News->Users->find('list', ['limit' => 200]);
-        $files = $this->News->Files->find('list', ['limit' => 200]);
-        $tags = $this->News->Tags->find('list', ['limit' => 200]);
-        $this->set(compact('news', 'users', 'files', 'tags'));
-    }
 
     /**
      * Edit method

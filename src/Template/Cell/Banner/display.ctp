@@ -39,14 +39,11 @@
     </div>
     <div class=" container text-center">
         <h2 class="main-h2 py-3"><?= strip_tags($news->title) ?></h2>
-
         <p class="blog-post-meta text-center">
             <?= h($news->date_submitted) ?> by
             <a href="#"><?= $news->has('user') ? $this->Html->link($news->user->first_name,
                     ['controller' => 'Users', 'action' => 'view', $news->user->first_name]) : '' ?></a>
         </p>
-
-
         <p class="container main-p py-3">
             <?php
             $string = strip_tags($news->text);

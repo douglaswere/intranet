@@ -9,7 +9,6 @@ $this->extend('/Common/centerPage');
 <?php echo $this->cell('Banner'); ?>
 <div class="container">
     <div class="col-md-12 blog-main">
-
         <div class="row py-2">
             <div class="col-md-8">
                 <span class="pb-3 mb-4 h3-semi text-left">NEWS & ANNOUNCEMENTS</span>
@@ -24,7 +23,6 @@ $this->extend('/Common/centerPage');
             </div>
         </div>
         <?php echo $this->cell('Announcements'); ?>
-        <?php //echo $this->cell('announcements'); ?>
         <?php foreach ($news as $news): ?>
             <div class="blog-post row">
                 <?php
