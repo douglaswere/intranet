@@ -10,9 +10,11 @@ use Cake\Validation\Validator;
  * News Model
  *
  * @property \App\Model\Table\UsersTable|\Cake\ORM\Association\BelongsTo $Users
- * @property \App\Model\Table\FilesTable|\Cake\ORM\Association\BelongsToMany $Files
- * @property \App\Model\Table\TagsTable|\Cake\ORM\Association\BelongsToMany $Tags
+ * @property \App\Model\Table\FilesTable|\Cake\ORM\Association\BelongsTo $Files
  * @property \App\Model\Table\NewsImagesTable|\Cake\ORM\Association\HasMany $NewsImages
+ *
+ * @property \App\Model\Table\TagsTable|\Cake\ORM\Association\BelongsToMany $Tags
+ *
  * @method \App\Model\Entity\News get($primaryKey, $options = [])
  * @method \App\Model\Entity\News newEntity($data = null, array $options = [])
  * @method \App\Model\Entity\News[] newEntities(array $data, array $options = [])
@@ -43,6 +45,12 @@ class NewsTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
+        $this->belongsTo('Files', [
+            'foreignKey' => 'banner_id'
+        ]);
+        $this->hasMany('NewsImages', [
+            'foreignKey' => 'news_id'
+        ]);
         $this->belongsToMany('Files', [
             'foreignKey' => 'news_id',
             'targetForeignKey' => 'file_id',
@@ -52,11 +60,6 @@ class NewsTable extends Table
             'foreignKey' => 'news_id',
             'targetForeignKey' => 'tag_id',
             'joinTable' => 'news_tags'
-        ]);
-        $this->hasMany('NewsImages', [
-            'foreignKey' => 'news_id',
-            'dependent' => true,
-            'cascadeCallbacks' => true,
         ]);
     }
 
@@ -85,17 +88,13 @@ class NewsTable extends Table
 
         $validator
             ->boolean('feature')
+            ->requirePresence('feature', 'create')
             ->allowEmptyString('feature', false);
 
         $validator
-            ->dateTime('date_submitted')
+            ->scalar('banner_css')
+            ->allowEmptyString('banner_css');
 
-            ->allowEmptyDateTime('date_submitted', false);
-
-        $validator
-            ->dateTime('date_modified')
-
-            ->allowEmptyDateTime('date_modified', false);
 
         $validator
             ->dateTime('date_approved')
@@ -104,6 +103,10 @@ class NewsTable extends Table
         $validator
             ->dateTime('date_expires')
             ->allowEmptyDateTime('date_expires');
+
+        $validator
+            ->scalar('active')
+            ->allowEmptyString('active');
 
         return $validator;
     }
@@ -118,11 +121,8 @@ class NewsTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['user_id'], 'Users'));
+        $rules->add($rules->existsIn(['banner_id'], 'Files'));
 
         return $rules;
-    }
-    public function findFeature(Query $query, array $options)
-    {
-        return $query->where(['feature' => '1'])->limit(1);
     }
 }

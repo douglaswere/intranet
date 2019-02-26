@@ -11,15 +11,18 @@ use Cake\ORM\Entity;
  * @property string $text
  * @property int $user_id
  * @property bool $feature
+ * @property int|null $banner_id
+ * @property string|null $banner_css
  * @property \Cake\I18n\FrozenTime $date_submitted
  * @property \Cake\I18n\FrozenTime $date_modified
  * @property \Cake\I18n\FrozenTime|null $date_approved
  * @property \Cake\I18n\FrozenTime|null $date_expires
+ * @property string|null $active
  *
  * @property \App\Model\Entity\User $user
  * @property \App\Model\Entity\File[] $files
- * @property \App\Model\Entity\Tag[] $tags
  * @property \App\Model\Entity\NewsImage[] $news_images
+ * @property \App\Model\Entity\Tag[] $tags
  */
 class News extends Entity
 {
@@ -38,12 +41,16 @@ class News extends Entity
         'text' => true,
         'user_id' => true,
         'feature' => true,
+        'banner_id' => true,
+        'banner_css' => true,
         'date_submitted' => true,
         'date_modified' => true,
         'date_approved' => true,
         'date_expires' => true,
+        'active' => true,
         'user' => true,
         'files' => true,
+        'news_images' => true,
         'tags' => true
     ];
 }

@@ -9,7 +9,6 @@ use Cake\Validation\Validator;
 /**
  * Files Model
  *
- * @property \App\Model\Table\BlobsTable|\Cake\ORM\Association\BelongsTo $Blobs
  * @property \App\Model\Table\NewsTable|\Cake\ORM\Association\BelongsToMany $News
  * @property \App\Model\Table\StoresTable|\Cake\ORM\Association\BelongsToMany $Stores
  *
@@ -39,10 +38,6 @@ class FilesTable extends Table
         $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
-        $this->belongsTo('Blobs', [
-            'foreignKey' => 'blob_id',
-            'joinType' => 'INNER'
-        ]);
         $this->belongsToMany('News', [
             'foreignKey' => 'file_id',
             'targetForeignKey' => 'news_id',
@@ -66,6 +61,22 @@ class FilesTable extends Table
         $validator
             ->nonNegativeInteger('id')
             ->allowEmptyString('id', 'create');
+
+        $validator
+            ->scalar('src')
+            ->requirePresence('src', 'create')
+            ->allowEmptyString('src', false);
+
+        $validator
+            ->scalar('path')
+            ->maxLength('path', 200)
+            ->requirePresence('path', 'create')
+            ->allowEmptyString('path', false);
+
+        $validator
+            ->scalar('type')
+            ->requirePresence('type', 'create')
+            ->allowEmptyString('type', false);
 
         $validator
             ->scalar('mime_type')
@@ -92,30 +103,8 @@ class FilesTable extends Table
             ->nonNegativeInteger('height')
             ->allowEmptyString('height');
 
-        $validator
-            ->dateTime('date_created')
-            ->requirePresence('date_created', 'create')
-            ->allowEmptyDateTime('date_created', false);
 
-        $validator
-            ->dateTime('date_accessed')
-            ->requirePresence('date_accessed', 'create')
-            ->allowEmptyDateTime('date_accessed', false);
 
         return $validator;
-    }
-
-    /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
-     *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
-     */
-    public function buildRules(RulesChecker $rules)
-    {
-        $rules->add($rules->existsIn(['blob_id'], 'Blobs'));
-
-        return $rules;
     }
 }

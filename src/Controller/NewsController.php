@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\ORM\TableRegistry;
 use Google_Client;
 use Google_Service_Drive;
 use Google_Service_Drive_Permission;
@@ -16,6 +17,7 @@ use Google_Service_Exception;
  * @property \App\Model\Table\NewsTable $News
  * @property bool|object NewsImages
  * @property bool|object GoogleDrive
+ * @property bool|object Files
  *
  * @method \App\Model\Entity\News[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
@@ -46,7 +48,7 @@ class NewsController extends AppController
     {
         $this->viewBuilder()->setLayout('home');
         $this->paginate = [
-            'contain' => ['Users', 'NewsImages'],
+            'contain' => ['Users','Files'],
             'condition' => ['News.feature =' => '1'],
             'limit' => 5,
             'order' => ['id' => 'DESC']
@@ -67,7 +69,6 @@ class NewsController extends AppController
         $news = $this->News->get($id, [
             'contain' => ['Users', 'Files', 'Tags']
         ]);
-
         $this->set('news', $news);
     }
 
@@ -88,13 +89,77 @@ class NewsController extends AppController
     {
         $client = $this->GoogleDrive->client();
         $files_list = $this->GoogleDrive->listFiles($client);
-        //  echo '<pre>';
+        echo '<pre>';
         var_dump($files_list);
         exit;
     }
 
-
     public function add()
+    {
+        $news = $this->News->newEntity();
+        if ($this->request->is(['post'])) {
+            $info = $this->request->getData();
+            $file = $info['image'];
+            /**uploading the image to google Drive */
+            $client = $this->GoogleDrive->client();
+            $file_id = $this->GoogleDrive->uploadImage($file, $client);
+            //google drive service set permissions and file roles
+            $this->GoogleDrive->setPermission($file_id, $client, 'anyone', 'reader');
+            /***end of uploading functionality***/
+            $news = $this->News->patchEntity($news, $this->request->getData());
+            $news->user_id = 1;
+            $news->active = 'yes';
+            $news->banner_css = 'background-image: linear-gradient(to right, #FFFFFF 50% , #FFFFFF 50%);';
+
+            if ($this->News->save($news)) {
+                // print_r( $news->getErrors());
+                $this->loadModel('Files');
+                $image = $this->Files->newEntity();
+                $dir = WWW_ROOT . 'files\\';
+                if (move_uploaded_file($file['tmp_name'], $dir . $file['name'])) {
+                    $this->request->data['filename'] = $file['name'];
+                    $size = getimagesize($file['tmp_name'], $info);
+                    $mime_type = mime_content_type($file['tmp_name']);
+                    $newFile = $this->Files->patchEntity($image, $file);
+                    $news_id = $news->id;
+                    $newFile->news_id = $news_id;
+
+                    $newFile->height = $size[0];
+                    $newFile->width = $size[1];
+                    // $newsImage->url = $dir . $file['name'];
+                    $newFile->src = 'google';//{google,onedrive,local}
+                    $newFile->path = $file_id;
+                    $newFile->type = 'image';//file,image
+                    $newFile->mime_type = $mime_type;
+                    //$newFile->size = 'image';
+                    /**link the  join tables with foreign keys to one another***/
+                    $newFile->news = [$news];
+
+                    if ($this->Files->save($newFile)) {
+                        /**update the news banner id with the file id***/
+                        $new = $this->News->get($news_id);
+                        $new->banner_id = $newFile->id;
+                        $this->News->save($new);
+                        $this->Flash->success(__('The image file has been saved.'));
+                    }
+                  //  print_r($newFile->getErrors());
+                }
+                //exit;
+                $this->Flash->success(__('The news has been saved.'));
+                return $this->redirect(['controller' => 'news', 'action' => 'home']);
+                //return $this->redirect(['action' => 'index']);
+            }
+            // print_r( $news->getErrors());
+            //  exit;
+            $this->Flash->error(__('The news could not be saved. Please, try again.'));
+        }
+        $users = $this->News->Users->find('list', ['limit' => 200]);
+        $files = $this->News->Files->find('list', ['limit' => 200]);
+        $tags = $this->News->Tags->find('list', ['limit' => 200]);
+        $this->set(compact('news', 'users', 'files', 'tags'));
+    }
+
+    public function add_images()
     {
         $news = $this->News->newEntity();
         if ($this->request->is(['post'])) {
@@ -155,7 +220,6 @@ class NewsController extends AppController
             $news = $this->News->patchEntity($news, $this->request->getData());
             if ($this->News->save($news)) {
                 $this->Flash->success(__('The news has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The news could not be saved. Please, try again.'));
@@ -178,7 +242,7 @@ class NewsController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $news = $this->News->get($id);
         if ($this->News->delete($news)) {
-            $this->Flash->success(__('The news has been deleted.'));
+            $this->Flash->error(__('The news has been deleted.'));
         } else {
             $this->Flash->error(__('The news could not be deleted. Please, try again.'));
         }
@@ -189,7 +253,7 @@ class NewsController extends AppController
     {
         $action = $this->request->getParam('action');
         if ($action === 'add') {
-            Configure::write('debug', 0);
+              Configure::write('debug', 0);
 
         }
         // return parent::beforeFilter($event); // TODO: Change the autogenerated stub

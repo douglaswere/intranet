@@ -19,7 +19,6 @@ class FilesControllerTest extends TestCase
      */
     public $fixtures = [
         'app.Files',
-        'app.Blobs',
         'app.News',
         'app.Stores',
         'app.NewsFiles',

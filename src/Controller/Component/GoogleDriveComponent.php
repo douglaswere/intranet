@@ -113,7 +113,7 @@ class GoogleDriveComponent extends Component
         /* $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
          $client->setHttpClient($guzzleClient);*/
         $drive_service = new Google_Service_Drive($client);
-        $file_drive = new \Google_Service_Drive_DriveFile();
+        $file_drive = new Google_Service_Drive_DriveFile();
         $file_drive->setName($file['name']);
         $file_drive->setDescription('Intranet image file');
         $file_drive->setMimeType('image/jpeg');

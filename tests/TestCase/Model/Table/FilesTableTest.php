@@ -25,7 +25,6 @@ class FilesTableTest extends TestCase
      */
     public $fixtures = [
         'app.Files',
-        'app.Blobs',
         'app.News',
         'app.Stores'
     ];
@@ -70,16 +69,6 @@ class FilesTableTest extends TestCase
      * @return void
      */
     public function testValidationDefault()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

@@ -1,14 +1,14 @@
 <?php foreach ($feature as $news): ?>
 
     <?php
-    $image = $this->Url->build('/' . 'files/' . $news->news_images[0]['name']);
-
-    $style = $news->news_images[0]['style'];
+    $image = $this->Url->build('/' . 'files/' . $news->files[0]['name']);
+    $path = $news->files[0]['path'];
+    $style = $news->banner_css;
     //background-image: linear-gradient(to right, #46696B 50% , #BFDEA3 50%);
     ?>
     <div class="container-fluid" style="<?php echo $style; ?>">
         <div class="container py-lg-5 py-5 text-white border-botton-line"
-             style=" background-image: url('https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>');background-repeat: no-repeat; background-size: contain;">
+             style=" background-image: url('https://drive.google.com/uc?export=view&id=<?php echo $path; ?>');background-repeat: no-repeat; background-size: contain;">
             <div class="row">
                 <div class="col-md-8 ">
                     <h1 class="display-4 font-italic"></h1>

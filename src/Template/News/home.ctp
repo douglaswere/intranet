@@ -3,12 +3,13 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\News[]|\Cake\Collection\CollectionInterface $news
  */
-$this->extend('/Common/centerPage')
+$this->extend('/Common/centerPage');
 ?>
 <?php $this->start('center'); ?>
 <?php echo $this->cell('Banner'); ?>
 <div class="container">
     <div class="col-md-12 blog-main">
+
         <div class="row py-2">
             <div class="col-md-8">
                 <span class="pb-3 mb-4 h3-semi text-left">NEWS & ANNOUNCEMENTS</span>
@@ -25,15 +26,14 @@ $this->extend('/Common/centerPage')
         <?php echo $this->cell('Announcements'); ?>
         <?php //echo $this->cell('announcements'); ?>
         <?php foreach ($news as $news): ?>
-
             <div class="blog-post row">
+                <?php
+                $image = $this->Url->build('/' . 'files/' . $news->files[0]['name']);
+                ?>
                 <div class="col-md-2">
                     <div class="card mb-4 shadow-sm">
-                        <?php
-                        $image = $this->Url->build('/' . 'files/' . $news->news_images[0]['name']);
-                        ?>
                         <img
-                            src="https://drive.google.com/uc?export=view&id=<?php echo $news->news_images['0']['url']; ?>"
+                            src="https://drive.google.com/uc?export=view&id=<?php echo $news->files[0]['path']; ?>"
                             class="img-fluid" alt="article">
                     </div>
                 </div>
@@ -42,7 +42,6 @@ $this->extend('/Common/centerPage')
                     <h2 class="blog-post-title"><?= h($news->title) ?></h2>
                     <p class="main-p">
                         <?php
-
                         $string = strip_tags($news->text);
                         if (strlen($string) > 200) {
 

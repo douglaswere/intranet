@@ -37,7 +37,7 @@ class BannerCell extends Cell
     {
         $this->loadModel('News');
         $feature = $this->News->find('all', [
-            'contain' => ['NewsImages','Users'],
+            'contain' => ['Files','Users'],
             'limit' => 1,
             'order' => ['News.id' => 'DESC']
         ])->where(['feature ' => '1']);

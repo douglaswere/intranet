@@ -20,9 +20,6 @@ class FilesController extends AppController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Blobs']
-        ];
         $files = $this->paginate($this->Files);
 
         $this->set(compact('files'));
@@ -38,7 +35,7 @@ class FilesController extends AppController
     public function view($id = null)
     {
         $file = $this->Files->get($id, [
-            'contain' => ['Blobs', 'News', 'Stores']
+            'contain' => ['News', 'Stores']
         ]);
 
         $this->set('file', $file);
@@ -61,10 +58,9 @@ class FilesController extends AppController
             }
             $this->Flash->error(__('The file could not be saved. Please, try again.'));
         }
-        $blobs = $this->Files->Blobs->find('list', ['limit' => 200]);
         $news = $this->Files->News->find('list', ['limit' => 200]);
         $stores = $this->Files->Stores->find('list', ['limit' => 200]);
-        $this->set(compact('file', 'blobs', 'news', 'stores'));
+        $this->set(compact('file', 'news', 'stores'));
     }
 
     /**
@@ -88,10 +84,9 @@ class FilesController extends AppController
             }
             $this->Flash->error(__('The file could not be saved. Please, try again.'));
         }
-        $blobs = $this->Files->Blobs->find('list', ['limit' => 200]);
         $news = $this->Files->News->find('list', ['limit' => 200]);
         $stores = $this->Files->Stores->find('list', ['limit' => 200]);
-        $this->set(compact('file', 'blobs', 'news', 'stores'));
+        $this->set(compact('file', 'news', 'stores'));
     }
 
     /**

@@ -7,7 +7,9 @@ use Cake\ORM\Entity;
  * File Entity
  *
  * @property int $id
- * @property int $blob_id
+ * @property string $src
+ * @property string $path
+ * @property string $type
  * @property string $mime_type
  * @property string $name
  * @property int $size
@@ -16,7 +18,6 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\FrozenTime $date_created
  * @property \Cake\I18n\FrozenTime $date_accessed
  *
- * @property \App\Model\Entity\Blob $blob
  * @property \App\Model\Entity\News[] $news
  * @property \App\Model\Entity\Store[] $stores
  */
@@ -33,7 +34,9 @@ class File extends Entity
      * @var array
      */
     protected $_accessible = [
-        'blob_id' => true,
+        'src' => true,
+        'path' => true,
+        'type' => true,
         'mime_type' => true,
         'name' => true,
         'size' => true,
@@ -41,7 +44,6 @@ class File extends Entity
         'height' => true,
         'date_created' => true,
         'date_accessed' => true,
-        'blob' => true,
         'news' => true,
         'stores' => true
     ];
