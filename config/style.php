@@ -14,8 +14,8 @@ return [
     'prevDisabled' => '<a  href="{{url}}">{{text}}</a>',
     'input' => '<div class="form-group"><input type="{{type}}" name="{{name}}" class="form-control input-form"{{attrs}}/></div>',
     'dateWidget' => '<div class="form-group"><div class="row"><div class="col-md-3">{{day}}</div><div class="col-md-3">{{month}}</div><div class="col-md-3">{{year}}</div></div></div>',
-    'inputSubmit' => '<input class="form-control" type="{{type}}"{{attrs}} />',
-    'submitContainer' => '<div class="submit">{{content}}</div>',
+    'inputSubmit' => '<input class="submit"  type="{{type}}"{{attrs}} />',
+    'submitContainer' => '<div class="py-4">{{content}}</div>',
     'error'=>'<div class="alert alert-danger"> <i id="fa-danger" class="fa fa-exclamation-circle"></i> {{content}}</div>'
 
 ]

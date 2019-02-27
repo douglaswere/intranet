@@ -56,6 +56,18 @@ class NewsController extends AppController
         $news = $this->paginate($this->News);
         $this->set(compact('news'));
     }
+    public function carousel()
+    {
+        $this->viewBuilder()->setLayout('home');
+        $this->paginate = [
+            'contain' => ['Users','Files'],
+            'condition' => ['News.feature =' => '1'],
+            'limit' => 5,
+            'order' => ['id' => 'DESC']
+        ];
+        $news = $this->paginate($this->News);
+        $this->set(compact('news'));
+    }
 
     /**
      * View method

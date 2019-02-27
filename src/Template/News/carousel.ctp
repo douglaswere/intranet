@@ -6,7 +6,7 @@
 $this->extend('/Common/centerPage');
 ?>
 <?php $this->start('center'); ?>
-<?php echo $this->cell('Banner'); ?>
+<?php echo $this->cell('Carousel'); ?>
 <div class="container">
     <div class="col-md-12 blog-main">
         <div class="row py-2">

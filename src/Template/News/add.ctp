@@ -79,6 +79,7 @@ $this->extend('/Common/centerPage')
                             echo $this->Form->control('text', ['label' => false, 'rows' => '15', 'cols' => '10']);
                             echo $this->Form->control('feature',['class'=>'form-control']);
                             echo $this->Form->control('tags._ids', ['options' => $tags]);
+
                             ?>
                             <?php
                             echo $this->Form->button('Submit', ['type' => 'Submit',
@@ -95,6 +96,7 @@ $this->extend('/Common/centerPage')
                             echo $this->Form->button('Cancel', ['type' => 'reset', 'escape' => true,
                                 'class'=>'cancel']);
                             ?>
+
                             <?= $this->Form->end() ?>
                             </div>
                         </fieldset>

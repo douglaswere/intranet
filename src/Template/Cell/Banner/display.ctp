@@ -30,9 +30,7 @@
                                 IIT Ticket
                             </button>
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </div>
@@ -48,7 +46,7 @@
             <?php
             echo $this->Text->truncate(
                 $news->text,
-                200,
+                2000,
                 [
                     'ellipsis' => '...',
                     'exact' => false
