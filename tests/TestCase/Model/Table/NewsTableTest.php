@@ -27,7 +27,6 @@ class NewsTableTest extends TestCase
         'app.News',
         'app.Users',
         'app.Files',
-        'app.NewsImages',
         'app.Tags'
     ];
 

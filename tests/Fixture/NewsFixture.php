@@ -61,10 +61,10 @@ class NewsFixture extends TestFixture
                 'feature' => 1,
                 'banner_id' => 1,
                 'banner_css' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-                'date_submitted' => '2019-02-26 17:12:42',
-                'date_modified' => '2019-02-26 17:12:42',
-                'date_approved' => '2019-02-26 17:12:42',
-                'date_expires' => '2019-02-26 17:12:42',
+                'date_submitted' => '2019-02-27 14:33:13',
+                'date_modified' => '2019-02-27 14:33:13',
+                'date_approved' => '2019-02-27 14:33:13',
+                'date_expires' => '2019-02-27 14:33:13',
                 'active' => 'Lorem ipsum dolor sit amet'
             ],
         ];

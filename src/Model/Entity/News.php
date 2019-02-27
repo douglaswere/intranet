@@ -21,7 +21,6 @@ use Cake\ORM\Entity;
  *
  * @property \App\Model\Entity\User $user
  * @property \App\Model\Entity\File[] $files
- * @property \App\Model\Entity\NewsImage[] $news_images
  * @property \App\Model\Entity\Tag[] $tags
  */
 class News extends Entity
@@ -50,7 +49,6 @@ class News extends Entity
         'active' => true,
         'user' => true,
         'files' => true,
-        'news_images' => true,
         'tags' => true
     ];
 }

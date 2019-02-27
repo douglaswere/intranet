@@ -149,9 +149,11 @@ class NewsController extends AppController
                 return $this->redirect(['controller' => 'news', 'action' => 'home']);
                 //return $this->redirect(['action' => 'index']);
             }
-            // print_r( $news->getErrors());
-            //  exit;
+            /* print_r( $news->getErrors());
+              exit;*/
             $this->Flash->error(__('The news could not be saved. Please, try again.'));
+
+
         }
         $users = $this->News->Users->find('list', ['limit' => 200]);
         $files = $this->News->Files->find('list', ['limit' => 200]);

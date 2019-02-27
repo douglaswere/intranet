@@ -40,22 +40,18 @@ $this->extend('/Common/centerPage');
                     <h2 class="blog-post-title"><?= h($news->title) ?></h2>
                     <p class="main-p">
                         <?php
-                        $string = strip_tags($news->text);
-                        if (strlen($string) > 200) {
+                        echo $this->Text->truncate(
+                            $news->text,
+                            200,
+                            [
+                                'ellipsis' => '...',
+                                'exact' => false
+                            ]
+                        );
 
-                            // truncate string
-                            $stringCut = substr($string, 0, 200);
-                            $endPoint = strrpos($stringCut, ' ');
 
-                            //if the string doesn't contain any space then it will cut without word basis.
-                            $string = $endPoint ? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
-                            $string .= '...';
-                        }
-                        echo $string;
                         ?>
-
                     </p>
-
                     <h3>
                         <?= $this->Html->link(__('Read more'), ['action' => 'view', $news->id], ['class' => 'a-h3']) ?>
 

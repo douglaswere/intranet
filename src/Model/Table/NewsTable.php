@@ -11,7 +11,6 @@ use Cake\Validation\Validator;
  *
  * @property \App\Model\Table\UsersTable|\Cake\ORM\Association\BelongsTo $Users
  * @property \App\Model\Table\FilesTable|\Cake\ORM\Association\BelongsTo $Files
- * @property \App\Model\Table\NewsImagesTable|\Cake\ORM\Association\HasMany $NewsImages
  *
  * @property \App\Model\Table\TagsTable|\Cake\ORM\Association\BelongsToMany $Tags
  *
@@ -47,9 +46,6 @@ class NewsTable extends Table
         ]);
         $this->belongsTo('Files', [
             'foreignKey' => 'banner_id'
-        ]);
-        $this->hasMany('NewsImages', [
-            'foreignKey' => 'news_id'
         ]);
         $this->belongsToMany('Files', [
             'foreignKey' => 'news_id',
@@ -95,6 +91,15 @@ class NewsTable extends Table
             ->scalar('banner_css')
             ->allowEmptyString('banner_css');
 
+        /*$validator
+            ->dateTime('date_submitted')
+            ->requirePresence('date_submitted', 'create')
+            ->allowEmptyDateTime('date_submitted', false);*/
+
+        /*$validator
+            ->dateTime('date_modified')
+            ->requirePresence('date_modified', 'create')
+            ->allowEmptyDateTime('date_modified', false);*/
 
         $validator
             ->dateTime('date_approved')

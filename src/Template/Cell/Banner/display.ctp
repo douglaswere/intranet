@@ -46,19 +46,16 @@
         </p>
         <p class="container main-p py-3">
             <?php
-            $string = strip_tags($news->text);
-            if (strlen($string) > 500) {
+            echo $this->Text->truncate(
+                $news->text,
+                200,
+                [
+                    'ellipsis' => '...',
+                    'exact' => false
+                ]
+            );
+            ?>
 
-                // truncate string
-                $stringCut = substr($string, 0, 500);
-                $endPoint = strrpos($stringCut, ' ');
-
-                //if the string doesn't contain any space then it will cut without word basis.
-                $string = $endPoint ? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
-                $string .= '...';
-            }
-            echo $string;
-            ?>.
         </p>
 
         <h3>

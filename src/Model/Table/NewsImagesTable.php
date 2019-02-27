@@ -39,7 +39,8 @@ class NewsImagesTable extends Table
 
         $this->belongsTo('News', [
             'foreignKey' => 'news_id',
-            'joinType' => 'INNER'
+            'joinType' => 'INNER',
+            'cascadeCallbacks'=>true
         ]);
     }
 
