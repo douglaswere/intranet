@@ -37,7 +37,7 @@
             <div class="carousel-item <?php echo $active; ?> border-botton-line " style="<?php echo $style; ?>">
                 <div class="row">
                     <div class="col-md-7 text-center" >
-                        <img src="<?php echo $image; ?>" alt="<?php echo $image; ?>"  height="400px">
+                        <img src="https://drive.google.com/uc?export=view&id=<?php echo $path; ?>" alt="<?php echo $image; ?>"  height="400px">
                     </div>
                     <div class="col-md-4">
                         <div class="carousel-caption">
