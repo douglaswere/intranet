@@ -26,6 +26,7 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\News patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \App\Model\Entity\News[] patchEntities($entities, array $data, array $options = [])
  * @method \App\Model\Entity\News findOrCreate($search, callable $callback = null, $options = [])
+ * @method removeTag($text)
  */
 class NewsTable extends Table
 {
@@ -40,6 +41,7 @@ class NewsTable extends Table
     public function initialize(array $config)
     {
         parent::initialize($config);
+        $this->addBehavior('StripTags');
 
 
         $this->setTable('news');
@@ -63,6 +65,7 @@ class NewsTable extends Table
             'targetForeignKey' => 'tag_id',
             'joinTable' => 'news_tags'
         ]);
+
 
     }
 
@@ -138,13 +141,18 @@ class NewsTable extends Table
     }
     public  function  beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options)
     {
-
         if (isset($data['text'])) {
-            $data['text'] = strip_tags($data['text']);
+            $data['text'] = $this->removeTag($data['text']);
         }
         if (isset($data['title'])) {
-            $data['title'] = strip_tags($data['title']);
-
+            $data['title'] = $this->removeTag($data['title']);
         }
+    }
+    public function findFeature(Query $query, array $options)
+    {
+        $query->where([
+            $this->alias() . '.feature' => 1
+        ]);
+        return $query;
     }
 }

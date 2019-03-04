@@ -22,7 +22,6 @@ use Cake\Validation\Validator;
  */
 class AnnouncementsTable extends Table
 {
-
     /**
      * Initialize method
      *

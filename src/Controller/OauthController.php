@@ -34,7 +34,6 @@ class  OauthController extends AppController
 
     public function callback()
     {
-
         require_once  WWW_VENDOR.'autoload.php';
         $client = new Google_Client();
         /*$guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
@@ -49,7 +48,6 @@ class  OauthController extends AppController
         $client->addScope(Google_Service_Drive::DRIVE); //::DRIVE_METADATA_READONLY
 
         $params = $this->request->getQueryParams('code');
-
          echo '<pre>';
          var_dump($client);
          var_dump($params);

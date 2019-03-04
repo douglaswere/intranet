@@ -83,4 +83,17 @@ class NewsTableTest extends TestCase
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
+    public function testFindFeature()
+    {
+        $query = $this->News->find('feature');
+        $this->assertInstanceOf('Cake\ORM\Query', $query);
+        $result = $query->enableHydration(false)->toArray();
+        $expected = [
+            ['id' => 1, 'title' => 'First Article'],
+            ['id' => 2, 'title' => 'Second Article'],
+            ['id' => 3, 'title' => 'Third Article']
+        ];
+
+        $this->assertEquals($expected, $result);
+    }
 }
