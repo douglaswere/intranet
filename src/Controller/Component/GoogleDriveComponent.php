@@ -8,6 +8,7 @@
 
 namespace App\Controller\Component;
 
+use Cake\Cache\Cache;
 use Cake\Controller\Component;
 use Google_Client;
 use Google_Service_Drive;
@@ -21,6 +22,8 @@ class GoogleDriveComponent extends Component
     private $client;
     private $service;
     private $dir;
+   // private $redirectUrl = '/intranet/oauth/callback';
+    private $redirectUrl = '/oauth2callback.php';
 
     // -----------------------------------------------------------------------------------
     // Constructor
@@ -47,65 +50,34 @@ class GoogleDriveComponent extends Component
 
     public function setup()
     {
-        // create the service
-        // $this->service = new Google_Service_Drive($this->client);
-        if (file_exists($this->dir . 'credentials.json')) {
-            $access_token = file_get_contents($this->dir . 'credentials.json');
-            $this->client->setAccessToken($access_token);
-            //Refresh the token if it's expired.
-            if ($this->client->isAccessTokenExpired()) {
-                $refreshTokenSaved = $this->client->getRefreshToken();
-                // $refreshTokenSaved = $client->getRefreshToken($access_token);
-                // $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-                $this->client->fetchAccessTokenWithRefreshToken($refreshTokenSaved);
-                // pass access token to some variable
-                $accessTokenUpdated = $this->client->getAccessToken();
-                $accessTokenUpdated['refresh_token'] = $refreshTokenSaved;
-                //Set the new access token
-                $accessToken = $refreshTokenSaved;
-                $this->client->setAccessToken($accessToken);
-                file_put_contents($this->dir . 'credentials.json', json_encode($accessTokenUpdated));
-                return $this->client;
-
-            }
-            return $this->client;
-        }
-        // $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . 'cake/intranet/oauth/callback';
-        $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
+        $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] .$this->redirectUrl;
         header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
         exit;
-
     }
 
     public function client()
     {
         if (file_exists($this->dir . 'credentials.json')) {
             $access_token = file_get_contents($this->dir . 'credentials.json');
+            Cache::write('credentials', json_encode($access_token));
             $this->client->setAccessToken($access_token);
             //Refresh the token if it's expired.
             /*$guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
             $this->client->setHttpClient($guzzleClient);*/
             if ($this->client->isAccessTokenExpired()) {
                 $refreshTokenSaved = $this->client->getRefreshToken();
-                // $refreshTokenSaved = $client->getRefreshToken($access_token);
-                // $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
                 $this->client->fetchAccessTokenWithRefreshToken($refreshTokenSaved);
-                // pass access token to some variable
                 $accessTokenUpdated = $this->client->getAccessToken();
                 $accessTokenUpdated['refresh_token'] = $refreshTokenSaved;
-                //Set the new access token
                 $accessToken = $refreshTokenSaved;
                 $this->client->setAccessToken($accessToken);
+                Cache::write('credentials', json_encode($accessTokenUpdated));
                 file_put_contents($this->dir . 'credentials.json', json_encode($accessTokenUpdated));
                 return $this->client;
             }
             return $this->client;
-
         }
-        $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/oauth2callback.php';
-        header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
-        exit;
-
+        $this->setup();
     }
 
     public function uploadImage($file, $client)

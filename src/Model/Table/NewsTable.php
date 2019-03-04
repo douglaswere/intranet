@@ -1,6 +1,8 @@
 <?php
 namespace App\Model\Table;
 
+use ArrayObject;
+use Cake\Event\Event;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -13,6 +15,8 @@ use Cake\Validation\Validator;
  * @property \App\Model\Table\FilesTable|\Cake\ORM\Association\BelongsTo $Files
  *
  * @property \App\Model\Table\TagsTable|\Cake\ORM\Association\BelongsToMany $Tags
+ *
+ *
  *
  * @method \App\Model\Entity\News get($primaryKey, $options = [])
  * @method \App\Model\Entity\News newEntity($data = null, array $options = [])
@@ -32,9 +36,11 @@ class NewsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
+
     public function initialize(array $config)
     {
         parent::initialize($config);
+
 
         $this->setTable('news');
         $this->setDisplayField('title');
@@ -57,6 +63,7 @@ class NewsTable extends Table
             'targetForeignKey' => 'tag_id',
             'joinTable' => 'news_tags'
         ]);
+
     }
 
     /**
@@ -127,7 +134,17 @@ class NewsTable extends Table
     {
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         $rules->add($rules->existsIn(['banner_id'], 'Files'));
-
         return $rules;
+    }
+    public  function  beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options)
+    {
+
+        if (isset($data['text'])) {
+            $data['text'] = strip_tags($data['text']);
+        }
+        if (isset($data['title'])) {
+            $data['title'] = strip_tags($data['title']);
+
+        }
     }
 }

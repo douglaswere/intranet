@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
@@ -108,12 +109,14 @@ class NewsController extends AppController
 
     public function add()
     {
+
+        $client = $this->GoogleDrive->client();
         $news = $this->News->newEntity();
         if ($this->request->is(['post'])) {
             $info = $this->request->getData();
             $file = $info['image'];
             /**uploading the image to google Drive */
-            $client = $this->GoogleDrive->client();
+           // $client = $this->GoogleDrive->client();
             $file_id = $this->GoogleDrive->uploadImage($file, $client);
             //google drive service set permissions and file roles
             $this->GoogleDrive->setPermission($file_id, $client, 'anyone', 'reader');

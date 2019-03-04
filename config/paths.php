@@ -55,6 +55,8 @@ define('CONFIG', ROOT . DS . 'config' . DS);
  */
 define('WWW_ROOT', ROOT . DS . 'webroot' . DS);
 
+define('WWW_VENDOR', ROOT . DS . 'vendor' . DS);
+
 /**
  * Path to the tests directory.
  */

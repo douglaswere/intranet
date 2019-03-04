@@ -35,6 +35,7 @@ class News extends Entity
      *
      * @var array
      */
+
     protected $_accessible = [
         'title' => true,
         'text' => true,
